@@ -3,11 +3,11 @@ package com.brokenworldrp.chatranges.chatrange;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -15,6 +15,8 @@ import org.bukkit.potion.PotionEffectType;
 
 import com.brokenworldrp.chatranges.ChatRangesMain;
 import com.brokenworldrp.chatranges.utils.Recipients;
+
+import net.md_5.bungee.api.ChatColor;
 
 public class ChatRange {
 	private String rangeName;
@@ -24,6 +26,7 @@ public class ChatRange {
 	private double rangeRadius;
 	private boolean crossDimension;
 	private ChatColor rangeColor;
+	private String prefix;
 	private String rangeWritePermission;
 	private String rangeReadPermission;
 	
@@ -37,6 +40,7 @@ public class ChatRange {
 		//get players with permission in range
 		if(rangeRadius <= 0) {
 			playersInRange = Bukkit.getOnlinePlayers().stream()
+					.filter(pl -> !pl.equals(player))
 					.filter(pl -> pl.hasPermission(rangeReadPermission));
 			if(!crossDimension) {
 				playersInRange.filter(pl -> pl.getWorld().equals(player.getWorld()));
@@ -47,6 +51,7 @@ public class ChatRange {
 			playersInRange = player.getNearbyEntities(rangeRadius, rangeRadius, rangeRadius).stream()
 				.filter(en -> en instanceof Player)
 				.map(en -> (Player) en)
+				.filter(pl -> !pl.equals(player))
 				.filter(pl -> pl.hasPermission(rangeReadPermission));
 			//TODO: if config do radial check
 		}
@@ -65,11 +70,20 @@ public class ChatRange {
 		rec.hiddenRecipients = new HashSet<Player>(allRecipients);   
 		rec.hiddenRecipients.removeAll(rec.recipients);
 		
-		//list of spies (spies - all)
+		//list of spies (spies - all - player)
 		rec.spies = new HashSet<Player>(ChatRangesMain.getSpies()); 
 		rec.spies.removeAll(allRecipients);
+		rec.spies.remove(player);
 		
 		return rec;
+	}
+	
+	public static ChatRange getPlayerChatRange(UUID playerID) {
+		return ChatRangesMain.getChatRanges().get(ChatRangesMain.getPlayerRanges().get(playerID));
+	}
+
+	public ChatColor getRangeColor() {
+		return rangeColor;
 	}
 
 }

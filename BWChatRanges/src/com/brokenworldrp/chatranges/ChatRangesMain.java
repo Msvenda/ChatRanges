@@ -7,7 +7,6 @@ import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.brokenworldrp.chatranges.chatlistener.ChatListener;
 import com.brokenworldrp.chatranges.chatrange.ChatRange;
 
 public class ChatRangesMain extends JavaPlugin {
