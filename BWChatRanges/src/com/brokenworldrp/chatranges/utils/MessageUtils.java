@@ -18,7 +18,7 @@ public class MessageUtils {
 		
 		//send to recievers
 		if(recipients.recipients.isEmpty()) {
-			sendNoRecipientMessage(player, range);
+			sendNoRecipientMessage(player, message, range);
 		}
 		else {
 			for(Player p : recipients.recipients) {
@@ -37,8 +37,8 @@ public class MessageUtils {
 		
 	}
 	
-	private static void sendNoRecipientMessage(Player player, ChatRange range) {
-		BaseComponent noRecipientMessage = ChatFormatter.getNoRecipientMessage(player, range);
+	private static void sendNoRecipientMessage(Player player, String message, ChatRange range) {
+		BaseComponent noRecipientMessage = ChatFormatter.getNoRecipientMessage(player, message, range);
 		player.spigot().sendMessage(noRecipientMessage);
 	}
 	

@@ -2,14 +2,12 @@ package com.brokenworldrp.chatranges.chatrange;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
@@ -18,7 +16,8 @@ import com.brokenworldrp.chatranges.utils.Recipients;
 
 import net.md_5.bungee.api.ChatColor;
 
-public class ChatRange {
+public class ChatRange implements Range{
+	private String key;
 	private String rangeName;
 	private String rangeCommand;
 	private String rangeDescription;
@@ -26,7 +25,7 @@ public class ChatRange {
 	private double rangeRadius;
 	private boolean crossDimension;
 	private ChatColor rangeColor;
-	private String prefix;
+	private String rangePrefix;
 	private String rangeWritePermission;
 	private String rangeReadPermission;
 	
@@ -82,8 +81,44 @@ public class ChatRange {
 		return ChatRangesMain.getChatRanges().get(ChatRangesMain.getPlayerRanges().get(playerID));
 	}
 
-	public ChatColor getRangeColor() {
+	@Override
+	public ChatColor getColor() {
 		return rangeColor;
+	}
+
+	@Override
+	public String getKey() {
+		return key;
+	}
+
+	@Override
+	public String getPrefix() {
+		return rangePrefix;
+	}
+
+	@Override
+	public String getName() {
+		return rangeName;
+	}
+
+	@Override
+	public double getRange() {
+		return rangeRadius;
+	}
+
+	@Override
+	public boolean isCrossDimensional() {
+		return crossDimension;
+	}
+
+	@Override
+	public String getCommand() {
+		return rangeCommand;
+	}
+
+	@Override
+	public Set<String> getAliases() {
+		return rangeAliases;
 	}
 
 }

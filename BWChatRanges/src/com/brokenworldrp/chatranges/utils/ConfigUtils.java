@@ -12,4 +12,14 @@ public class ConfigUtils {
 		return null;
 	}
 
+	public static String getSpyPosition() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static String getEmoteFormat() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
