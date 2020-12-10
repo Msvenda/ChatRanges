@@ -38,7 +38,7 @@ public class ChangeRangeCommand extends BukkitCommand{
 				: Optional.empty();
 				
 		if(message.isPresent()) {
-			MessageUtils.sendRangedMessage(player, message.get(), Range.getChatRangeByKey(rangeKey));
+			MessageUtils.sendRangedMessage(player, message.get(), Range.getChatRangeByKey(rangeKey).get());
 		}
 		else {
 			Range.setPlayerRangebyKey(player.getUniqueId(), rangeKey);

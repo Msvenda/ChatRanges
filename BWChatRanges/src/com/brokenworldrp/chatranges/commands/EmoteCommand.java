@@ -37,7 +37,7 @@ public class EmoteCommand extends BukkitCommand {
 				? Optional.of(StringUtils.join(args, ' '))
 				: Optional.empty();
 		if(message.isPresent()) {
-			MessageUtils.sendRangedEmote(player, message.get(), Range.getEmoteRangeByKey(rangeKey));
+			MessageUtils.sendRangedEmote(player, message.get(), Range.getEmoteRangeByKey(rangeKey).get());
 		}
 		else {
 			MessageUtils.sendNoEmoteMessage(player);

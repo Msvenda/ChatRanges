@@ -1,6 +1,5 @@
 package com.brokenworldrp.chatranges.chatrange;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,13 +38,13 @@ public Recipients getPlayersInRange(Player player);
 		
 	}
 	
-	public static ChatRange getChatRangeByKey(String key) {
+	public static Optional<ChatRange> getChatRangeByKey(String key) {
 		
-		return ChatRangesMain.getChatRanges().get(key);
+		return Optional.ofNullable(ChatRangesMain.getChatRanges().get(key));
 	}
 	
-	public static EmoteRange getEmoteRangeByKey(String rangeKey) {
-		return ChatRangesMain.getEmoteRanges().get(rangeKey);
+	public static Optional<EmoteRange> getEmoteRangeByKey(String rangeKey) {
+		return Optional.ofNullable(ChatRangesMain.getEmoteRanges().get(rangeKey));
 	}
 	
 	
@@ -61,6 +60,14 @@ public Recipients getPlayersInRange(Player player);
 
 	public static List<ChatRange> getChatRangeList() {
 		return ChatRangesMain.getChatRanges().values().stream().collect(Collectors.toList());
+	}
+
+	public static void toggleMuteRangeForPlayer(Player player, String rangeKey) {
+		if(ChatRangesMain.getMutedRanges().get(rangeKey).contains(player)) {
+			ChatRangesMain.getMutedRanges().get(rangeKey).remove(player);
+			return;
+		}
+		ChatRangesMain.getMutedRanges().get(rangeKey).add(player);
 	}
 
 	

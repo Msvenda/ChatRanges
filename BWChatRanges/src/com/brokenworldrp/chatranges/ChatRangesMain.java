@@ -1,6 +1,7 @@
 package com.brokenworldrp.chatranges;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -17,6 +18,8 @@ public class ChatRangesMain extends JavaPlugin {
 	private static HashMap<String, ChatRange> chatRanges;
 	
 	private static HashMap<UUID, String> playerRanges;
+	
+	private static HashMap<String, List<Player>> mutedRanges;
 	
 	private static Set<Player> spies;
 	
@@ -45,5 +48,9 @@ public class ChatRangesMain extends JavaPlugin {
 	
 	public static Set<Player> getSpies() {
 		return spies;
+	}
+	
+	public static HashMap<String, List<Player>> getMutedRanges() {
+		return mutedRanges;
 	}
 }
