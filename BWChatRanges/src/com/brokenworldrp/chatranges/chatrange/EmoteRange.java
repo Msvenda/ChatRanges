@@ -1,6 +1,6 @@
 package com.brokenworldrp.chatranges.chatrange;
 
-import java.util.Set;
+import java.util.List;
 
 import org.bukkit.entity.Player;
 
@@ -14,7 +14,7 @@ public class EmoteRange implements Range {
 	private String emoteDescription;
 	private String emoteCommand;
 	private ChatRange emoteRange;
-	private Set<String> emoteAliases;
+	private List<String> emoteAliases;
 	private ChatColor emoteColour;
 	private String emotePrefix;
 	@Override
@@ -28,8 +28,7 @@ public class EmoteRange implements Range {
 
 	@Override
 	public String getKey() {
-		// TODO Auto-generated method stub
-		return null;
+		return key;
 	}
 	@Override
 	public String getPrefix() {
@@ -37,17 +36,14 @@ public class EmoteRange implements Range {
 	}
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return emoteName;
 	}
 	@Override
 	public boolean isCrossDimensional() {
-		// TODO Auto-generated method stub
 		return emoteRange.isCrossDimensional();
 	}
 	@Override
 	public String getCommand() {
-		// TODO Auto-generated method stub
 		return emoteCommand;
 	}
 	@Override
@@ -55,12 +51,15 @@ public class EmoteRange implements Range {
 		return emoteRange.getRange();
 	}
 	@Override
-	public Set<String> getAliases() {
-		// TODO Auto-generated method stub
+	public List<String> getAliases() {
 		return emoteAliases;
 	}
 	public ChatColor getRangeColor() {
 		return emoteRange.getColor();
+	}
+	@Override
+	public String getWritePermission() {
+		return emoteRange.getWritePermission();
 	}
 	
 }

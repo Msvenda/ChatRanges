@@ -1,6 +1,7 @@
 package com.brokenworldrp.chatranges.chatrange;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -21,7 +22,7 @@ public class ChatRange implements Range{
 	private String rangeName;
 	private String rangeCommand;
 	private String rangeDescription;
-	private Set<String> rangeAliases;
+	private List<String> rangeAliases;
 	private double rangeRadius;
 	private boolean crossDimension;
 	private ChatColor rangeColor;
@@ -117,8 +118,13 @@ public class ChatRange implements Range{
 	}
 
 	@Override
-	public Set<String> getAliases() {
+	public List<String> getAliases() {
 		return rangeAliases;
+	}
+
+	@Override
+	public String getWritePermission() {
+		return this.rangeWritePermission;
 	}
 
 }

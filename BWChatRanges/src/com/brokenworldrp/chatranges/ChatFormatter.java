@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 
 import com.brokenworldrp.chatranges.chatrange.ChatRange;
 import com.brokenworldrp.chatranges.chatrange.EmoteRange;
+import com.brokenworldrp.chatranges.chatrange.Range;
 import com.brokenworldrp.chatranges.utils.ConfigUtils;
 import com.brokenworldrp.chatranges.utils.TextUtils;
 
@@ -73,7 +74,7 @@ public class ChatFormatter {
 		return formattedMessage;
 	}
 
-	public static BaseComponent getNoRecipientMessage(Player player, String message, ChatRange range) { 
+	public static BaseComponent getNoRecipientMessage(Player player, String message, Range range) { 
 		BaseComponent formattedMessage = new TextComponent();
 		
 		for(String component : ConfigUtils.getEmoteFormat().split("{|}")) {

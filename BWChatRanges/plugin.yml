@@ -1,0 +1,15 @@
+
+
+commands:
+  ranges:
+    description: 'Check the available ranges and their distances.'
+    aliases: ['range', 'channels', 'channel', 'ch']
+    usage: 'Issue /<command> to see what are the ranges available.'
+  spy:
+    description: 'Toggles spy mode to read messages that wouldn''t be readable otherwise.'
+    aliases: ['rangespy', 'rs', 's']
+    usage: '/<command> [on/off] - Checks or sets your spy status.'
+  mute:
+    description: 'Mutes or unmutes a range.'
+    aliases: ['rangemute', 'channelmute']
+    usage: '/<command> <range> - Toggles the mute status of the channel.'

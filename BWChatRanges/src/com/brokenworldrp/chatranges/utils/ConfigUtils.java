@@ -22,4 +22,24 @@ public class ConfigUtils {
 		return null;
 	}
 
+	public static String getErrorColor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static String getPlayersOnlyMessage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static String getNoPermissionMessage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static String getMissingCommandRangeMessage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
