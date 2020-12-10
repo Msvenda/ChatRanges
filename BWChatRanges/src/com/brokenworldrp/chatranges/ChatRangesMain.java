@@ -8,8 +8,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.brokenworldrp.chatranges.chatrange.ChatRange;
+import com.brokenworldrp.chatranges.chatrange.EmoteRange;
 
 public class ChatRangesMain extends JavaPlugin {
+	
+	private static HashMap<String, EmoteRange> emoteRanges;
 	
 	private static HashMap<String, ChatRange> chatRanges;
 	
@@ -34,6 +37,10 @@ public class ChatRangesMain extends JavaPlugin {
 	
 	public static HashMap<String, ChatRange> getChatRanges() {
 		return chatRanges;
+	}
+	
+	public static HashMap<String, EmoteRange> getEmoteRanges(){
+		return emoteRanges;
 	}
 	
 	public static Set<Player> getSpies() {

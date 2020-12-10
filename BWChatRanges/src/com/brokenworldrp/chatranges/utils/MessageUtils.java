@@ -85,5 +85,17 @@ public class MessageUtils {
 		player.sendMessage(String.format("%s%s", ConfigUtils.getErrorColor(), ConfigUtils.getMissingCommandRangeMessage()));
 		
 	}
+
+	public static void sendNoEmoteMessage(Player player) {
+		player.sendMessage(String.format("%s%s", ConfigUtils.getErrorColor(), ConfigUtils.getNoEmoteMessage()));
+		
+	}
+
+	public static void sendRangeList(Player player) {
+		BaseComponent rangeListMessage = TextUtils.createRangeList(player);
+
+		player.spigot().sendMessage(rangeListMessage);
+		
+	}
 	
 }

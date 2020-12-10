@@ -1,8 +1,10 @@
 package com.brokenworldrp.chatranges.chatrange;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
 
@@ -37,10 +39,15 @@ public Recipients getPlayersInRange(Player player);
 		
 	}
 	
-	public static ChatRange getRangeByKey(String key) {
+	public static ChatRange getChatRangeByKey(String key) {
 		
 		return ChatRangesMain.getChatRanges().get(key);
 	}
+	
+	public static EmoteRange getEmoteRangeByKey(String rangeKey) {
+		return ChatRangesMain.getEmoteRanges().get(rangeKey);
+	}
+	
 	
 	public static boolean setPlayerRangebyKey(UUID playerID, String rangeKey) {
 		if(ChatRangesMain.getChatRanges().containsKey(rangeKey)) {
@@ -51,5 +58,11 @@ public Recipients getPlayersInRange(Player player);
 		
 		
 	}
+
+	public static List<ChatRange> getChatRangeList() {
+		return ChatRangesMain.getChatRanges().values().stream().collect(Collectors.toList());
+	}
+
+	
 	
 }

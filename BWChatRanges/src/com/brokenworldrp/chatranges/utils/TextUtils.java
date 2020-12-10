@@ -29,6 +29,10 @@ public class TextUtils {
 		return rangePrefixComponents.get(range.getKey());
 	}
 	
+	public static BaseComponent getRangeTextComponent(Range range) {
+		return rangeTextComponents.get(range.getKey());
+	}
+	
 	public static Boolean createRangeComponents(Range range) {
 		if(rangePrefixComponents.containsKey(range.getKey())) {
 			return false;
@@ -181,6 +185,23 @@ public class TextUtils {
 		return spyText;
 	}
 	
+	public static BaseComponent createRangeList(Player player) {
+		ChatColor baseColor = ConfigUtils.getDefaultColor();
+		BaseComponent prefix = new TextComponent("- ");
+		prefix.setColor(baseColor);
+		BaseComponent crossDimension = new TextComponent(" *");
+		crossDimension.setColor(baseColor);
+		BaseComponent listText = new TextComponent("Availiable ranges: \n");
+		listText.setColor(baseColor);
+		for(Range r : Range.getChatRangeList()) {
+			BaseComponent e = r.isCrossDimensional() 
+					? new TextComponent(prefix, getRangeTextComponent(r), crossDimension, NEW_LINE)
+					: new TextComponent(prefix, getRangeTextComponent(r), NEW_LINE);
+			listText.addExtra(e);
+		}
+		return listText;
+	}
+	
 	private static BaseComponent simpleKeyValueComponent(String k, String v) {
 		BaseComponent prefix = new TextComponent("- ");
 		prefix.setColor(COLOUR_PREFIX);
@@ -238,4 +259,6 @@ public class TextUtils {
 
 		return itemNbtCompoundObject.toString();
 	}
+
+	
 }

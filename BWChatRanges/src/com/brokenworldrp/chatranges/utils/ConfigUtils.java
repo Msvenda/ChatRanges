@@ -1,5 +1,7 @@
 package com.brokenworldrp.chatranges.utils;
 
+import net.md_5.bungee.api.ChatColor;
+
 public class ConfigUtils {
 
 	public static String prefixPlaceholder = "{prefix}";
@@ -38,6 +40,16 @@ public class ConfigUtils {
 	}
 
 	public static String getMissingCommandRangeMessage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static Object getNoEmoteMessage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static ChatColor getDefaultColor() {
 		// TODO Auto-generated method stub
 		return null;
 	}
