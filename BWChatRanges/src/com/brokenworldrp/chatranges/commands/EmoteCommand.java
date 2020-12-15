@@ -1,22 +1,21 @@
 package com.brokenworldrp.chatranges.commands;
 
-import java.util.Optional;
-
+import com.brokenworldrp.chatranges.chatrange.EmoteRange;
+import com.brokenworldrp.chatranges.chatrange.RangeRepository;
+import com.brokenworldrp.chatranges.utils.MessageUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 
-import com.brokenworldrp.chatranges.chatrange.ChatRange;
-import com.brokenworldrp.chatranges.chatrange.Range;
-import com.brokenworldrp.chatranges.utils.MessageUtils;
+import java.util.Optional;
 
 public class EmoteCommand extends BukkitCommand {
 	
 	private String rangeKey;
 	private String rangeWritePerm;
 	
-	public EmoteCommand(ChatRange range){
+	public EmoteCommand(EmoteRange range){
 		super(range.getCommand(), "", "/" + range.getCommand() + " <message>", range.getAliases());
 		rangeKey = range.getKey();
 		rangeWritePerm = range.getWritePermission();
@@ -32,15 +31,16 @@ public class EmoteCommand extends BukkitCommand {
 		if(!(player.hasPermission(rangeWritePerm))) {
 			MessageUtils.sendNoPermissionMessage(player);
 		}
+		RangeRepository repo = RangeRepository.getRangeRepository();
 		
 		Optional<String> message = args.length > 0 
 				? Optional.of(StringUtils.join(args, ' '))
 				: Optional.empty();
 		if(message.isPresent()) {
-			MessageUtils.sendRangedEmote(player, message.get(), Range.getEmoteRangeByKey(rangeKey).get());
+			MessageUtils.sendRangedEmote(player, message.get(), repo.getEmoteRangeByKey(rangeKey).get());
 		}
 		else {
-			MessageUtils.sendNoEmoteMessage(player);
+			return false;
 		}
 		return true;
 	}

@@ -1,15 +1,15 @@
 package com.brokenworldrp.chatranges.commands;
 
-import java.util.Optional;
-
+import com.brokenworldrp.chatranges.chatrange.ChatRange;
+import com.brokenworldrp.chatranges.chatrange.Config;
+import com.brokenworldrp.chatranges.chatrange.RangeRepository;
+import com.brokenworldrp.chatranges.utils.MessageUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 
-import com.brokenworldrp.chatranges.chatrange.ChatRange;
-import com.brokenworldrp.chatranges.chatrange.Range;
-import com.brokenworldrp.chatranges.utils.MessageUtils;
+import java.util.Optional;
 
 public class ChangeRangeCommand extends BukkitCommand{
 
@@ -32,17 +32,26 @@ public class ChangeRangeCommand extends BukkitCommand{
 		if(!(player.hasPermission(rangeWritePerm))) {
 			MessageUtils.sendNoPermissionMessage(player);
 		}
+		Config config = Config.getConfig();
+		RangeRepository repo = RangeRepository.getRangeRepository();
+
+		Optional<ChatRange> range = repo.getChatRangeByKey(rangeKey);
+		if(!range.isPresent()){
+			MessageUtils.sendMissingCommandRangeMessage(player);
+			return true;
+		}
 		
 		Optional<String> message = args.length > 0 
 				? Optional.of(StringUtils.join(args, ' '))
 				: Optional.empty();
-				
-		if(message.isPresent()) {
-			MessageUtils.sendRangedMessage(player, message.get(), Range.getChatRangeByKey(rangeKey).get());
+
+		message.ifPresent(s -> MessageUtils.sendRangedMessage(player, s, range.get()));
+
+		if(config.isAliasSingleMessageEnabled() && message.isPresent()){
+			return true;
 		}
-		else {
-			Range.setPlayerRangebyKey(player.getUniqueId(), rangeKey);
-		}
+		repo.setPlayerRangebyKey(player.getUniqueId(), rangeKey);
+
 		return true;
 	}
 	

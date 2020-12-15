@@ -1,12 +1,10 @@
 package com.brokenworldrp.chatranges.chatrange;
 
-import java.util.List;
-
+import com.brokenworldrp.chatranges.utils.Recipients;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
-import com.brokenworldrp.chatranges.utils.Recipients;
-
-import net.md_5.bungee.api.ChatColor;
+import java.util.List;
 
 public class EmoteRange implements Range {
 	private String key;
@@ -17,10 +15,31 @@ public class EmoteRange implements Range {
 	private List<String> emoteAliases;
 	private ChatColor emoteColour;
 	private String emotePrefix;
-	@Override
+	private String emoteWritePermission;
+
+    public EmoteRange(String emoteKey, String name, String description, String command, List<String> aliases,
+					  ChatRange range, ChatColor colour, String prefix, String permission) {
+    	this.key = emoteKey;
+    	this.emoteName = name;
+    	this.emoteDescription = description;
+    	this.emoteCommand = command;
+    	this.emoteAliases = aliases;
+    	this.emoteRange = range;
+    	this.emoteColour = colour;
+    	this.emotePrefix = prefix;
+    	this.emoteWritePermission = permission;
+    }
+
+    @Override
 	public Recipients getPlayersInRange(Player player) {
 		return emoteRange.getPlayersInRange(player);
 	}
+
+	@Override
+	public String getDescription() {
+		return emoteDescription;
+	}
+
 	@Override
 	public ChatColor getColor() {
 		return emoteColour;
@@ -59,7 +78,7 @@ public class EmoteRange implements Range {
 	}
 	@Override
 	public String getWritePermission() {
-		return emoteRange.getWritePermission();
+		return emoteWritePermission;
 	}
 	
 }

@@ -1,15 +1,14 @@
 package com.brokenworldrp.chatranges.commands;
 
-import java.util.Optional;
-
+import com.brokenworldrp.chatranges.chatrange.ChatRange;
+import com.brokenworldrp.chatranges.chatrange.RangeRepository;
+import com.brokenworldrp.chatranges.utils.MessageUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.brokenworldrp.chatranges.chatrange.ChatRange;
-import com.brokenworldrp.chatranges.chatrange.Range;
-import com.brokenworldrp.chatranges.utils.MessageUtils;
+import java.util.Optional;
 
 public class MuteCommand  implements CommandExecutor{
 
@@ -22,14 +21,16 @@ public class MuteCommand  implements CommandExecutor{
 		if(args.length < 1) {
 			return false;
 		}
+		RangeRepository repo = RangeRepository.getRangeRepository();
+
 		Player player = (Player) sender;
 		
-		Optional<ChatRange> range = Range.getChatRangeByKey(args[0]);
+		Optional<ChatRange> range = repo.getChatRangeByKey(args[0]);
 		if(!range.isPresent()){
 			MessageUtils.sendRangeNotFoundMessage(player);
 			return false;
 		}
-		Range.toggleMuteRangeForPlayer(player, range.get().getKey());
+		repo.toggleMuteRangeForPlayer(player, range.get().getKey());
 		return true;
 	}
 }

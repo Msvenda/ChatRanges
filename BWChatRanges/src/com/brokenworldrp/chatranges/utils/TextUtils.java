@@ -1,23 +1,21 @@
 package com.brokenworldrp.chatranges.utils;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
-
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
+import com.brokenworldrp.chatranges.chatrange.Config;
 import com.brokenworldrp.chatranges.chatrange.EmoteRange;
 import com.brokenworldrp.chatranges.chatrange.Range;
-
+import com.brokenworldrp.chatranges.chatrange.RangeRepository;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.lang.reflect.Method;
 
 public class TextUtils {
-	private static HashMap<String, BaseComponent> rangePrefixComponents = new HashMap<String, BaseComponent>();
-	private static HashMap<String, BaseComponent> rangeTextComponents = new HashMap<String, BaseComponent>();
+	private static final String DELIMITER_REGEX = "[{}]+";
 	
 	private static final TextComponent NEW_LINE = new TextComponent("\n");
 	
@@ -25,16 +23,12 @@ public class TextUtils {
 	public static final ChatColor COLOUR_KEY = ChatColor.GOLD;
 	public static final ChatColor COLOUR_VALUE = ChatColor.AQUA;
 	
-	public static BaseComponent getRangePrefixComponent(Range range) {
-		return rangePrefixComponents.get(range.getKey());
-	}
-	
-	public static BaseComponent getRangeTextComponent(Range range) {
-		return rangeTextComponents.get(range.getKey());
-	}
+
 	
 	public static Boolean createRangeComponents(Range range) {
-		if(rangePrefixComponents.containsKey(range.getKey())) {
+		RangeRepository repo = RangeRepository.getRangeRepository();
+
+		if(repo.containsComponentsFor(range.getKey())) {
 			return false;
 		}
 		
@@ -62,14 +56,14 @@ public class TextUtils {
 		messageText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {hoverText}));
 		messageText.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, clickCommand));
 		
-		rangePrefixComponents.put(range.getKey(), messageText);
+		repo.addRangePrefixComponent(range.getKey(), messageText);
 		//create range text component
 		messageText = new TextComponent(range.getName());
 		messageText.setColor(range.getColor());
 		
 		messageText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {hoverText}));
 		messageText.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, clickCommand));
-		rangeTextComponents.put(range.getKey(), messageText);
+		repo.addRangeTextComponent(range.getKey(), messageText);
 		return true;
 	}
 
@@ -93,7 +87,7 @@ public class TextUtils {
 		//real name
 		hoverText.addExtra(simpleKeyValueComponent("Real name", player.getName()));
 		hoverText.addExtra(NEW_LINE);
-		hoverText.addExtra(String.format("Click to pre-type \"{0}\".", commandSuggest));
+		hoverText.addExtra(String.format("Click to pre-type \"%s\".", commandSuggest));
 		
 		displayName.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] { hoverText }));
 		displayName.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, commandSuggest));
@@ -102,13 +96,17 @@ public class TextUtils {
 	}
 	
 	public static BaseComponent getMessageTextComponents(String m, Player p, Range r) {
+		Config config = Config.getConfig();
+
 		BaseComponent message = new TextComponent();
 		//surround @hand/offhand with brackets for easier recognition
-		if( m.contains("@hand") || m.contains("@offhand")) {
-			m.replaceAll("@hand", "{@hand}");
-			m.replaceAll("@offhand", "{@offhand}");
+		if(config.isDisplayItemInChatEnabled()){
+			if( m.contains("@hand") || m.contains("@offhand")) {
+				m = m.replaceAll("@hand", "{@hand}");
+				m = m.replaceAll("@offhand", "{@offhand}");
+			}
 		}
-		String[] parts = m.split("{|}");
+		String[] parts = m.split(DELIMITER_REGEX);
 		for(String part : parts) {
 			if(part.equals("@hand")) {
 				ItemStack heldItem = p.getInventory().getItemInMainHand();
@@ -128,17 +126,21 @@ public class TextUtils {
 	}
 	
 	public static BaseComponent getEmoteTextComponents(String m, Player p, EmoteRange r) {
+		Config config = Config.getConfig();
+
 		BaseComponent message = new TextComponent();
 		String[] splitMessage = m.split("\"");
 		//if there is an odd number of elements, there is an event number of quotations
 		
 		for(int i = 0; i < splitMessage.length; i++) {
 			//surround @hand/offhand with brackets for easier recognition
-			if( splitMessage[i].contains("@hand") || splitMessage[i].contains("@offhand")) {
-				splitMessage[i].replaceAll("@hand", "{@hand}");
-				splitMessage[i].replaceAll("@offhand", "{@offhand}");
+			if(config.isDisplayItemInChatEnabled()){
+				if( splitMessage[i].contains("@hand") || splitMessage[i].contains("@offhand")) {
+					splitMessage[i] = splitMessage[i].replaceAll("@hand", "{@hand}");
+					splitMessage[i] = splitMessage[i].replaceAll("@offhand", "{@offhand}");
+				}
 			}
-			String[] parts = splitMessage[i].split("{|}");
+			String[] parts = splitMessage[i].split(DELIMITER_REGEX);
 			for(String part : parts) {
 				if(part.equals("@hand")) {
 					ItemStack heldItem = p.getInventory().getItemInMainHand();
@@ -186,17 +188,19 @@ public class TextUtils {
 	}
 	
 	public static BaseComponent createRangeList(Player player) {
-		ChatColor baseColor = ConfigUtils.getDefaultColor();
+		RangeRepository repo = RangeRepository.getRangeRepository();
+		Config config = Config.getConfig();
+		ChatColor baseColor = config.getDefaultColor();
 		BaseComponent prefix = new TextComponent("- ");
 		prefix.setColor(baseColor);
 		BaseComponent crossDimension = new TextComponent(" *");
 		crossDimension.setColor(baseColor);
 		BaseComponent listText = new TextComponent("Availiable ranges: \n");
 		listText.setColor(baseColor);
-		for(Range r : Range.getChatRangeList()) {
+		for(Range r : repo.getChatRangeList()) {
 			BaseComponent e = r.isCrossDimensional() 
-					? new TextComponent(prefix, getRangeTextComponent(r), crossDimension, NEW_LINE)
-					: new TextComponent(prefix, getRangeTextComponent(r), NEW_LINE);
+					? new TextComponent(prefix, repo.getRangeTextComponent(r), crossDimension, NEW_LINE)
+					: new TextComponent(prefix, repo.getRangeTextComponent(r), NEW_LINE);
 			listText.addExtra(e);
 		}
 		return listText;

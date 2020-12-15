@@ -1,21 +1,16 @@
 package com.brokenworldrp.chatranges.chatrange;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import com.brokenworldrp.chatranges.utils.Recipients;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
-import com.brokenworldrp.chatranges.ChatRangesMain;
-import com.brokenworldrp.chatranges.utils.Recipients;
-
-import net.md_5.bungee.api.ChatColor;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ChatRange implements Range{
 	private String key;
@@ -29,57 +24,84 @@ public class ChatRange implements Range{
 	private String rangePrefix;
 	private String rangeWritePermission;
 	private String rangeReadPermission;
-	
-	public String getRangeName() {
-		return rangeName;
-	}
+
+    public ChatRange(String rangeKey, String name, String description, String command, List<String> aliases,
+					 boolean crossDimension, Double distance, ChatColor colour, String prefix,
+					 String permission, String readPermission) {
+		this.key = rangeKey;
+		this.rangeName = name;
+		this.rangeDescription = description;
+		this.rangeCommand = command;
+		this.rangeAliases = aliases;
+		this.crossDimension = crossDimension;
+		this.rangeRadius = distance;
+		this.rangeColor = colour;
+		this.rangePrefix = prefix;
+		this.rangeWritePermission = permission;
+		this.rangeReadPermission = readPermission;
+
+    }
 	
 	public Recipients getPlayersInRange(Player player){
-		Stream<? extends Player> playersInRange;
-		
+    	RangeRepository repo = RangeRepository.getRangeRepository();
+    	Config config = Config.getConfig();
+
+		Set<Player> allRecipients;
 		//get players with permission in range
 		if(rangeRadius <= 0) {
-			playersInRange = Bukkit.getOnlinePlayers().stream()
-					.filter(pl -> !pl.equals(player))
-					.filter(pl -> pl.hasPermission(rangeReadPermission));
-			if(!crossDimension) {
-				playersInRange.filter(pl -> pl.getWorld().equals(player.getWorld()));
+			if(crossDimension){
+				allRecipients = Bukkit.getOnlinePlayers().stream()
+						.filter(pl -> !pl.equals(player))
+						.filter(pl -> pl.hasPermission(rangeReadPermission))
+						.collect(Collectors.toSet());
+			}
+			else{
+				allRecipients = Bukkit.getOnlinePlayers().stream()
+						.filter(pl -> !pl.equals(player))
+						.filter(pl -> pl.hasPermission(rangeReadPermission))
+						.filter(pl -> pl.getWorld().equals(player.getWorld()))
+						.collect(Collectors.toSet());
 			}
 		}
 		else {
 			//get all players in range
-			playersInRange = player.getNearbyEntities(rangeRadius, rangeRadius, rangeRadius).stream()
+			allRecipients = player.getNearbyEntities(rangeRadius, rangeRadius, rangeRadius).stream()
 				.filter(en -> en instanceof Player)
 				.map(en -> (Player) en)
 				.filter(pl -> !pl.equals(player))
-				.filter(pl -> pl.hasPermission(rangeReadPermission));
-			//TODO: if config do radial check
+				.filter(pl -> pl.hasPermission(rangeReadPermission))
+					.collect(Collectors.toSet());
+			if(config.isRadialDistanceCheckEnabled()){
+				allRecipients = allRecipients.stream().filter(pl -> pl.getLocation().distance(player.getLocation()) < rangeRadius)
+						.collect(Collectors.toSet());
+			}
 		}
-		Set<Player> allRecipients = playersInRange.collect(Collectors.toSet());
-		
+
 		//filter out invisible/hidden/gm3 players
-		playersInRange.filter(pl -> !player.canSee(pl) 
-				|| pl.hasPotionEffect(PotionEffectType.INVISIBILITY)
-				|| pl.getGameMode() == GameMode.SPECTATOR);
 		
 		Recipients rec = new Recipients();
 		//filtered list of visible recipients
-		rec.recipients = playersInRange.collect(Collectors.toSet());
+		rec.recipients = allRecipients.stream()
+				.filter(pl -> !player.canSee(pl)
+				|| pl.hasPotionEffect(PotionEffectType.INVISIBILITY)
+				|| pl.getGameMode() == GameMode.SPECTATOR)
+				.collect(Collectors.toSet());
 		
 		//list of invisible recipients (all - visible)
-		rec.hiddenRecipients = new HashSet<Player>(allRecipients);   
+		rec.hiddenRecipients = new HashSet<>(allRecipients);
 		rec.hiddenRecipients.removeAll(rec.recipients);
 		
 		//list of spies (spies - all - player)
-		rec.spies = new HashSet<Player>(ChatRangesMain.getSpies()); 
+		rec.spies = new HashSet<>(repo.getSpies());
 		rec.spies.removeAll(allRecipients);
 		rec.spies.remove(player);
 		
 		return rec;
 	}
-	
-	public static ChatRange getPlayerChatRange(UUID playerID) {
-		return ChatRangesMain.getChatRanges().get(ChatRangesMain.getPlayerRanges().get(playerID));
+
+	@Override
+	public String getDescription() {
+		return rangeDescription;
 	}
 
 	@Override
