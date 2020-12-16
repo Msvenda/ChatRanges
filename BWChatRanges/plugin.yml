@@ -1,4 +1,10 @@
 
+name: ChatRanges
+main: com.brokenworldrp.chatranges.ChatRangesMain
+version: 1.0
+api-version: 1.15
+author: "MX26"
+description: "A feature rich, customizable default chat replacement"
 
 commands:
   ranges:

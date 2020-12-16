@@ -1,20 +1,21 @@
 package com.brokenworldrp.chatranges.chatrange;
 
+import com.brokenworldrp.chatranges.utils.LoggingUtil;
+import com.brokenworldrp.chatranges.utils.TextUtils;
 import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.Bukkit;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
 public class RangeRepository {
-    private static final String RANGE_FILE = "/Plugins/BWChatRanges/rangeData.yml";
-    private static final String JSON_KEY = "player-ranges";
+    private static final String RANGE_FILE = "plugins/BWChatRanges/rangeData.yml";
+    private static final String YAML_KEY = "player-ranges";
 
     private static RangeRepository singleton;
 
@@ -34,40 +35,6 @@ public class RangeRepository {
         return singleton;
     }
 
-    public boolean saveRepositoryData(){
-        JSONObject object = new JSONObject();
-        object.put(JSON_KEY, playerRanges);
-        try(FileWriter file = new FileWriter(RANGE_FILE)){
-            file.write(object.toJSONString());
-            Bukkit.getLogger().info(String.format("Saved player ranges to %s.", RANGE_FILE));
-            return true;
-        }catch(IOException e){
-            Bukkit.getLogger().info(String.format("Failed to save player ranges to %s.", RANGE_FILE));
-            return false;
-        }
-    }
-
-    public boolean loadRepositoryData(){
-
-        File configFile = new File(RANGE_FILE);
-
-        if(!configFile.exists()){
-            Bukkit.getLogger().info(String.format("Failed to load player ranges, range file file not found at '%s'.", RANGE_FILE));
-            playerRanges = new HashMap<>();
-            return false;
-        }
-        try(FileReader file = new FileReader(RANGE_FILE)){
-            JSONParser jsonParser = new JSONParser();
-            JSONObject object = (JSONObject) jsonParser.parse(file);
-            playerRanges = (HashMap<UUID, String>) object.get(JSON_KEY);
-            return true;
-        }catch(Exception e){
-            Bukkit.getLogger().info(String.format("Failed to load player ranges from '%s'", RANGE_FILE));
-        }
-        playerRanges = new HashMap<>();
-        return false;
-    }
-
     private RangeRepository(){
         emoteRanges = new HashMap<>();
         chatRanges = new HashMap<>();
@@ -76,6 +43,71 @@ public class RangeRepository {
         rangeTextComponents = new HashMap<>();
         rangePrefixComponents = new HashMap<>();
         loadRepositoryData();
+    }
+
+    public boolean saveRepositoryData(){
+        File configFile = new File(RANGE_FILE);
+        YamlConfiguration data = YamlConfiguration.loadConfiguration(configFile);
+        for(UUID id : playerRanges.keySet()){
+            data.set(id.toString(), playerRanges.get(id));
+        }
+        try {
+            data.save(configFile);
+            LoggingUtil.logInfo(String.format("Saved player ranges to %s.", RANGE_FILE));
+            return true;
+        } catch (IOException e) {
+            LoggingUtil.logWarning(String.format("Failed to save player ranges to %s.", RANGE_FILE));
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public void loadRepositoryData(){
+
+        File configFile = new File(RANGE_FILE);
+        YamlConfiguration data = YamlConfiguration.loadConfiguration(configFile);
+        playerRanges = new HashMap<>();
+        for(String key : data.getKeys(false)){
+            playerRanges.put(UUID.fromString(key), data.getString(key));
+        }
+    }
+
+    public Boolean createRangeComponents(Range range) {
+        if(rangePrefixComponents.containsKey(range.getKey())) {
+            return false;
+        }
+
+        //create shared hover text
+        String clickCommand = String.format("/%s ", range.getCommand());
+        BaseComponent hoverText = new TextComponent(TextUtils.simpleKeyValueComponent("Name:", range.getName()));
+        hoverText.addExtra(TextUtils.simpleKeyValueComponent("Range:", String.format("%.1f blocks", range.getRange())));
+        hoverText.addExtra(TextUtils.simpleKeyValueComponent("Cross-Dimensional", range.isCrossDimensional() ?
+                "\u2713" : "\u2717"));
+        hoverText.addExtra(TextUtils.simpleKeyValueComponent("Command:", clickCommand));
+        for(String alias : range.getAliases()) {
+            hoverText.addExtra(TextUtils.simpleListComponent(alias));
+        }
+        hoverText.addExtra(TextUtils.simpleKeyValueComponent("Prefix:", range.getPrefix()));
+        hoverText.addExtra(TextUtils.simpleKeyValueComponent("Colour:", range.getColor().getName()));
+        hoverText.addExtra(new TextComponent("\n"));
+        hoverText.addExtra(new TextComponent("Click to change to this range.\nShift-click to pre-type \"" + clickCommand + "\""));
+
+        //create prefix component
+        BaseComponent messageText = new TextComponent(range.getPrefix());
+        messageText.setColor(range.getColor());
+
+        messageText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {hoverText}));
+        messageText.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, clickCommand));
+
+        rangePrefixComponents.put(range.getKey(), messageText);
+        //create range text component
+        messageText = new TextComponent(range.getName());
+        messageText.setColor(range.getColor());
+
+        messageText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {hoverText}));
+        messageText.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, clickCommand));
+        rangeTextComponents.put(range.getKey(), messageText);
+        return true;
     }
 
     public boolean setDefaultRangeKey(String key){
@@ -95,6 +127,7 @@ public class RangeRepository {
             defaultKey = range.getKey();
         }
         chatRanges.put(range.getKey(), range);
+        createRangeComponents(range);
     }
     public void addEmoteRange(EmoteRange range){
         emoteRanges.put(range.getKey(), range);

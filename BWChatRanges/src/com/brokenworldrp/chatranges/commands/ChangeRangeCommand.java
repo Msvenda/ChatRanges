@@ -50,6 +50,7 @@ public class ChangeRangeCommand extends BukkitCommand{
 		if(config.isAliasSingleMessageEnabled() && message.isPresent()){
 			return true;
 		}
+		MessageUtils.sendRangeChangedMessage(player, range.get());
 		repo.setPlayerRangebyKey(player.getUniqueId(), rangeKey);
 
 		return true;

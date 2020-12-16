@@ -1,7 +1,7 @@
 package com.brokenworldrp.chatranges.chatrange;
 
+import com.brokenworldrp.chatranges.utils.LoggingUtil;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 public class Config {
 
@@ -22,7 +21,7 @@ public class Config {
     private static final String RANGE_READ_PERM_PREFIX = "chatrange.read.";
     private static final String EMOTE_PERM_PREFIX = "chatrange.emote.";
 
-    private static final String CONFIG_LOCATION = "/Plugins/BWChatRanges/config.yml";
+    private static final String CONFIG_LOCATION = "plugins/BWChatRanges/config.yml";
 
     //defaults
     private ChatColor defaultMessageColor = ChatColor.GOLD;
@@ -84,15 +83,35 @@ public class Config {
         return config_instance;
     }
 
-    private Config() {
+    private ChatColor getColourFromString(String colour) throws IllegalArgumentException{
+        colour = colour.replaceAll(" ", "_");
+        colour = colour.toUpperCase();
+        return ChatColor.valueOf(colour);
+    }
 
-        Logger logger = Bukkit.getLogger();
+    private void createConfigFile() {
+        File configFile = new File(CONFIG_LOCATION);
+        try {
+            File parent = configFile.getParentFile();
+            if (!parent.exists() && !parent.mkdirs()) {
+                throw new IllegalStateException("Couldn't create dir: " + parent);
+            }
+            configFile.createNewFile();
+            Files.write(Paths.get(CONFIG_LOCATION), configData.getBytes());
+            LoggingUtil.logInfo(String.format("Config file created at '%s'", CONFIG_LOCATION));
+        } catch (IOException e) {
+            LoggingUtil.logWarning(String.format("Failed creating config file at '%s'", CONFIG_LOCATION));
+            e.printStackTrace();
+        }
+    }
+
+    private Config() {
         RangeRepository repo = RangeRepository.getRangeRepository();
 
         File configFile = new File(CONFIG_LOCATION);
 
         if(!configFile.exists()){
-            logger.info(String.format("Config file not found at '%s', creating new config file.", CONFIG_LOCATION));
+            LoggingUtil.logInfo(String.format("Config file not found at '%s', creating new config file.", configFile.getAbsolutePath()));
             createConfigFile();
         }
 
@@ -102,20 +121,20 @@ public class Config {
         ConfigurationSection defaultsSection = config.getConfigurationSection("defaults");
         ConfigurationSection featuresSection = config.getConfigurationSection("features");
         ConfigurationSection formattingSection = config.getConfigurationSection("formatting");
-        ConfigurationSection messagingSection = config.getConfigurationSection("messaging");
+        ConfigurationSection messagingSection = config.getConfigurationSection("messages");
 
         //load defaults
 
         try{
             defaultsSection = defaultsSection.getConfigurationSection("colour");
-            defaultMessageColor = ChatColor.valueOf(defaultsSection.getString("message").toUpperCase());
-            defaultErrorColor = ChatColor.valueOf(defaultsSection.getString("error").toUpperCase());
-            defaultPrefixColor = ChatColor.valueOf(defaultsSection.getString("prefix").toUpperCase());
+            defaultMessageColor = getColourFromString(defaultsSection.getString("message"));
+            defaultErrorColor = getColourFromString(defaultsSection.getString("error"));
+            defaultPrefixColor = getColourFromString(defaultsSection.getString("prefix"));
             defaultsSection = defaultsSection.getConfigurationSection("list");
-            defaultListKeyColor = ChatColor.valueOf(defaultsSection.getString("key").toUpperCase());
-            defaultListValueColor = ChatColor.valueOf(defaultsSection.getString("value").toUpperCase());
+            defaultListKeyColor = getColourFromString(defaultsSection.getString("key"));
+            defaultListValueColor = getColourFromString(defaultsSection.getString("value"));
         } catch(IllegalArgumentException e){
-            logger.warning("Failed to load default colour configuration, using default values");
+            LoggingUtil.logWarning("Failed to load default colour configuration, using default values");
             e.printStackTrace();
         }
 
@@ -123,70 +142,80 @@ public class Config {
         //load all ranges
         for(String rangeKey : rangesSection.getKeys(false)){
             //load values
-            ConfigurationSection range = rangesSection.getConfigurationSection(rangeKey);
-            String name = range.getString("name", rangeKey);
-            String command = range.getString("command", rangeKey);
-            String description = range.getString("description", "Changes your chat range to {range}. [{distance}]");
-            List<String> aliases = range.getStringList("aliases");
-            boolean crossDimension = range.getBoolean("cross-dimension", false);
-            Double distance = range.getDouble("distance", 10);
-            //try get color, use default on fail
-            ChatColor colour;
-            try{
-                colour = ChatColor.valueOf(range.getString("colour").toUpperCase());
-            }catch (IllegalArgumentException e){
-                logger.warning(String.format("Failed to load colour for range '%s', using default value", rangeKey));
-                e.printStackTrace();
-                colour = defaultPrefixColor;
+
+            if(rangesSection.contains(rangeKey)) {
+                ConfigurationSection range = rangesSection.getConfigurationSection(rangeKey);
+                String name = range.getString("name", rangeKey);
+                String command = range.getString("command", rangeKey);
+                String description = range.getString("description", "Changes your chat range to {range}. [{distance}]");
+                List<String> aliases = range.getStringList("aliases");
+                boolean crossDimension = range.getBoolean("cross-dimension", false);
+                Double distance = range.getDouble("distance", 10);
+                //try get color, use default on fail
+                ChatColor colour;
+                try {
+                    colour = getColourFromString(range.getString("colour"));
+                } catch (IllegalArgumentException e) {
+                    LoggingUtil.logWarning(String.format("Failed to load colour for range '%s', using default value", rangeKey));
+                    e.printStackTrace();
+                    colour = defaultPrefixColor;
+                }
+                String prefix = range.getString("prefix", String.format("[%s]", rangeKey));
+                String permission = range.contains("permission")
+                        ? RANGE_PERM_PREFIX + range.getString("permission")
+                        : "";
+                String readPermission = range.contains("read-permission")
+                        ? RANGE_READ_PERM_PREFIX + range.getString("read-permission")
+                        : "";
+                //create ChatRange and add to chatRangeList
+                ChatRange chatRange = new ChatRange(rangeKey, name, description,
+                        command, aliases, crossDimension, distance,
+                        colour, prefix, permission, readPermission);
+
+                repo.addChatRange(chatRange);
             }
-            String prefix = range.getString("prefix", String.format("[%s]", rangeKey));
-            String permission = range.contains("permission")
-                    ? RANGE_PERM_PREFIX + range.getString("permission")
-                    : "";
-            String readPermission = range.contains("read-permission")
-                    ? RANGE_READ_PERM_PREFIX + range.getString("read-permission")
-                    : "";
-            //create ChatRange and add to chatRangeList
-            ChatRange chatRange = new ChatRange(rangeKey, name, description,
-                    command, aliases, crossDimension, distance,
-                    colour, prefix, permission, readPermission);
-
-            repo.addChatRange(chatRange);
-
-
+            else{
+                LoggingUtil.logWarning("Failed loading range "+rangeKey);
+            }
         }
 
         //load all emotes
         for(String emoteKey : emotesSection.getKeys(false)){
+
             //load values
-            ConfigurationSection emote = rangesSection.getConfigurationSection(emoteKey);
-            String name = emote.getString("name");
-            String command = emote.getString("command");
-            String description = emote.getString("description");
-            String rangeKey = emote.getString("range");
-            Optional<ChatRange> range = repo.getChatRangeByKey(rangeKey);
-            List<String> aliases = emote.getStringList("aliases");
-            ChatColor colour;
-            try{
-                colour = ChatColor.valueOf(emote.getString("colour").toUpperCase());
-            }catch (IllegalArgumentException e){
-                logger.warning(String.format("Failed to load colour for emote '%s', using default value", rangeKey));
-                e.printStackTrace();
-                colour = defaultPrefixColor;
-            }
-            String prefix = emote.getString("prefix");
-            String permission = emote.contains("permission")
-                    ? EMOTE_PERM_PREFIX + emote.getString("permission")
-                    : "";
+            if(emotesSection.contains(emoteKey)){
+                ConfigurationSection emote = emotesSection.getConfigurationSection(emoteKey);
+                String name = emote.getString("name", emoteKey);
+                String command = emote.getString("command", emoteKey);
+                String description = emote.getString("description", "");
+                String rangeKey = emote.getString("range", "");
+                Optional<ChatRange> range = repo.getChatRangeByKey(rangeKey);
+                List<String> aliases = emote.getStringList("aliases");
+                ChatColor colour;
+                try{
+                    colour = getColourFromString(emote.getString("colour"));
+                }catch (IllegalArgumentException e){
+                    LoggingUtil.logWarning(String.format("Failed to load colour for emote '%s', using default value", rangeKey));
+                    e.printStackTrace();
+                    colour = defaultPrefixColor;
+                }
+                String prefix = emote.getString("prefix", String.format("[%s]", rangeKey));
+                String permission = emote.contains("permission")
+                        ? EMOTE_PERM_PREFIX + emote.getString("permission")
+                        : "";
 
-            if(range.isPresent()){
-                EmoteRange emoteRange = new EmoteRange(emoteKey, name, description,
-                        command, aliases, range.get(), colour, prefix, permission);
-                repo.addEmoteRange(emoteRange);
+                if(range.isPresent()){
+                    EmoteRange emoteRange = new EmoteRange(emoteKey, name, description,
+                            command, aliases, range.get(), colour, prefix, permission);
+                    repo.addEmoteRange(emoteRange);
 
+                }
+                else{
+                    LoggingUtil.logWarning(String.format("Range not found for emote '%s', skipping.", rangeKey));
+                }
             }
             else{
-                logger.warning(String.format("Range not found for emote '%s', skipping.", rangeKey));
+                LoggingUtil.logWarning("Failed loading emote "+emoteKey);
             }
         }
 
@@ -194,11 +223,11 @@ public class Config {
         Optional<String> defaultRangeKey = Optional.ofNullable(defaultsSection.getString("range"));
         if(defaultRangeKey.isPresent()){
             if(!repo.setDefaultRangeKey(defaultRangeKey.get())){
-                logger.warning(String.format("Failed to set '%s' as default range, defaulted to '%s'.", defaultRangeKey.get(), repo.getDefaultKey()));
+                LoggingUtil.logWarning(String.format("Failed to set '%s' as default range, defaulted to '%s'.", defaultRangeKey.get(), repo.getDefaultKey()));
             }
         }
         else{
-            logger.warning(String.format("Default range not set! Defaulting to '%s'.", repo.getDefaultKey()));
+            LoggingUtil.logWarning(String.format("Default range not set! Defaulting to '%s'.", repo.getDefaultKey()));
         }
 
         //load message types
@@ -241,15 +270,16 @@ public class Config {
         //load formatting
         messageFormat = formattingSection.getString("message", "{prefix} {player}: {message}");
         emoteFormat = formattingSection.getString("emote", "* {prefix} {player} {message}");
-        formattingSection.getConfigurationSection("command");
+        formattingSection = formattingSection
+                .getConfigurationSection("command");
         rangesCommandPrefix = formattingSection
                 .getConfigurationSection("ranges").getString("message-prefix", "Available Ranges:");
-        formattingSection.getConfigurationSection("spy");
+        formattingSection = formattingSection.getConfigurationSection("spy");
         spyTag = formattingSection.getString("tag");
         try{
-            spyColor = ChatColor.valueOf(formattingSection.getString("colour").toUpperCase());
+            spyColor = getColourFromString(formattingSection.getString("colour", ""));
         }catch (IllegalArgumentException e){
-            logger.warning("Failed to load colour for spy tag, using default value");
+            LoggingUtil.logWarning("Failed to load colour for spy tag, using default value");
             e.printStackTrace();
             spyColor = defaultPrefixColor;
         }
@@ -274,6 +304,10 @@ public class Config {
 
     public String getPlayersOnlyMessage() {
         return ePlayersOnly;
+    }
+
+    public String getNoRecipientMessage() {
+        return mChatNoRecpients;
     }
 
     public String getNoPermissionMessage() {
@@ -308,6 +342,10 @@ public class Config {
         return mSpyOff;
     }
 
+    public String getChangedRangeMessage() {
+        return mChangedRange;
+    }
+
     public boolean isAliasSingleMessageEnabled(){
         return aliasSingleMessage;
     }
@@ -326,18 +364,6 @@ public class Config {
 
     public boolean isRecipientNumberLoggingEnabled() {
         return recipientNumberLogging;
-    }
-
-    private void createConfigFile() {
-        File configFile = new File(CONFIG_LOCATION);
-        try {
-            configFile.createNewFile();
-            Files.write(Paths.get(CONFIG_LOCATION), configData.getBytes());
-            Bukkit.getLogger().info(String.format("Config file created at '%s'", CONFIG_LOCATION));
-        } catch (IOException e) {
-            Bukkit.getLogger().warning(String.format("Failed creating config file at '%s'", CONFIG_LOCATION));
-            e.printStackTrace();
-        }
     }
 
     private final String configData = "# \n" +
@@ -439,6 +465,10 @@ public class Config {
             "  no-recipients-alert: true\n" +
             "# Using @hand will share a snapshot of the item on your hand to the chat\n" +
             "  display-item-in-chat: true\n" +
+            "# More precise range check using radial distance rather than cube, more expensive\n" +
+            "  radial-distance-check: false\n" +
+            "# Number of message recipients will show up in console next to message in format (recievers, hidden recievers, spies)\n" +
+            "  recipient-number-logging: false\n" +
             "\n" +
             "defaults:\n" +
             "  range: 'Global'\n" +
@@ -478,11 +508,6 @@ public class Config {
             "  error-spy-toggle: 'Sorry, an unexpected error has occurred while trying to toggle your spy mode.'\n" +
             "  error-item-parsing: 'Sorry, an unexpected error has occurred while trying to format the item.'\n" +
             "  error-mute-unknown-range: 'Sorry, I am unable to find the range ''{range}''.'\n" +
-            "  error-translation: 'Sorry, an unexpected error has occurred while trying to scramble your message.'\n" +
-            "  error-mod-retrieving-range: 'Sorry, an unexpected error has occurred while trying to retrieve information about this range.'\n" +
-            "  error-mod-missing-range: 'Sorry, we are unable to find the range you have requested.'\n" +
-            "  error-mod-no-permission-range: 'Sorry, you do not have the permissions required to change to this range.'\n" +
-            "  error-mod-setting-range: 'Sorry, an unexpected error has occurred while trying to set your range.'\n" +
             "\n" +
             "formatting:\n" +
             "  message: '{prefix} {player}: {message}'\n" +
@@ -495,5 +520,6 @@ public class Config {
             "      colour: 'Gray'\n" +
             "      # 'prefix' (default) or 'suffix'\n" +
             "      position: 'prefix'\n";
+
 
 }

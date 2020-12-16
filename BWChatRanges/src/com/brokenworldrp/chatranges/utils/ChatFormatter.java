@@ -7,68 +7,75 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 
 public class ChatFormatter {
+	public static String prefixPlaceholder = "prefix";
+	public static String playerPlaceholder = "player";
+	public static String messagePlaceholder = "message";
+	public static String rangePlaceholder = "range";
+	
 	private static final String DELIMITER_REGEX = "[{}]+";
+	//private static final String DELIMITER_REGEX = "\\{";
 
-	public static BaseComponent getFormatedMessage(Player player, String message, ChatRange range) {
+	public static BaseComponent getFormattedMessage(Player player, String message, ChatRange range) {
 		//"<prefix>" component has range info on hover, set range on click, pre-type on shift-click
 		//"<player>" component has player info on hover, click to pre-type msg
 		//"<message>" component has @hand and @offhand option, shows item data on hover
 		Config config = Config.getConfig();
 		RangeRepository repo = RangeRepository.getRangeRepository();
 
-		BaseComponent formattedMessage = new TextComponent();
+		//BaseComponent[] formattedMessage = new ComponentBuilder("").create();
+		BaseComponent formattedMessage = new TextComponent("");
 		
 		for(String component : config.getMessageFormat().split(DELIMITER_REGEX)) {
-			if(component.equals(ConfigUtils.prefixPlaceholder)) {
-				formattedMessage.addExtra(repo.getRangePrefixComponent(range));
+			if(component.equals(prefixPlaceholder)) {
+				//formattedMessage = new ComponentBuilder().append(formattedMessage).append(repo.getRangePrefixComponent(range)).create();
+				formattedMessage = new TextComponent(formattedMessage, repo.getRangePrefixComponent(range));
 			}
-			else if(component.equals(ConfigUtils.playerPlaceholder)) {
-				formattedMessage.addExtra(TextUtils.getNameTextComponent(player));
+			else if(component.equals(playerPlaceholder)) {
+				//formattedMessage = new ComponentBuilder().append(formattedMessage).append(TextUtils.getNameTextComponent(player)).create();
+				formattedMessage = new TextComponent(formattedMessage, TextUtils.getNameTextComponent(player));
 			}
-			else if(component.equals(ConfigUtils.messagePlaceholder)) {
-				formattedMessage.addExtra(TextUtils.getMessageTextComponents(message, player, range));
+			else if(component.equals(messagePlaceholder)) {
+				//formattedMessage = new ComponentBuilder().append(formattedMessage).append(TextUtils.getMessageTextComponents(message, player, range)).create();
+				formattedMessage = new TextComponent(formattedMessage, TextUtils.getMessageTextComponents(message, player, range));
 			}
 			else {
-				formattedMessage.addExtra(TextUtils.formatText(component, range.getColor()));
+				//formattedMessage = new ComponentBuilder().append(formattedMessage).append(TextUtils.formatText(component, range.getColor())).create();
+				formattedMessage = new TextComponent(formattedMessage, TextUtils.formatText(component, range.getColor()));
 			}
 		}
 		
 		return formattedMessage;
 	}
 
-	public static BaseComponent getFormatedSpyMessage(BaseComponent formattedMessage) {
+	public static BaseComponent getFormattedSpyMessage(BaseComponent formattedMessage) {
 		Config config = Config.getConfig();
 		BaseComponent spyMessage = TextUtils.getSpyTextComponent();
 		if(config.getSpyPosition().equals("prefix")) {
-			spyMessage.addExtra(" ");
-			spyMessage.addExtra(formattedMessage);
-			return spyMessage;
+			return new TextComponent(spyMessage, new TextComponent(""), formattedMessage);
 		}
 		else {
-			formattedMessage.addExtra(" ");
-			formattedMessage.addExtra(spyMessage);
-			return formattedMessage;
+			return new TextComponent(formattedMessage, new TextComponent(""), spyMessage);
 		}		
 	}
 	
-	public static BaseComponent getFormatedEmote(Player player, String message, EmoteRange range){
+	public static BaseComponent getFormattedEmote(Player player, String message, EmoteRange range){
 		Config config = Config.getConfig();
 		RangeRepository repo = RangeRepository.getRangeRepository();
 
 		BaseComponent formattedMessage = new TextComponent();
 		
 		for(String component : config.getEmoteFormat().split(DELIMITER_REGEX)) {
-			if(component.equals(ConfigUtils.prefixPlaceholder)) {
-				formattedMessage.addExtra(repo.getRangePrefixComponent(range));
+			if(component.equals(prefixPlaceholder)) {
+				formattedMessage = new TextComponent(formattedMessage, repo.getRangePrefixComponent(range));
 			}
-			else if(component.equals(ConfigUtils.playerPlaceholder)) {
-				formattedMessage.addExtra(TextUtils.getNameTextComponent(player));
+			else if(component.equals(playerPlaceholder)) {
+				formattedMessage = new TextComponent(formattedMessage,TextUtils.getNameTextComponent(player));
 			}
-			else if(component.equals(ConfigUtils.messagePlaceholder)) {
-				formattedMessage.addExtra(TextUtils.getEmoteTextComponents(message, player, range));
+			else if(component.equals(messagePlaceholder)) {
+				formattedMessage = new TextComponent(formattedMessage,TextUtils.getEmoteTextComponents(message, player, range));
 			}
 			else {
-				formattedMessage.addExtra(TextUtils.formatText(component, range.getColor()));
+				formattedMessage = new TextComponent(formattedMessage,TextUtils.formatText(component, range.getColor()));
 			}
 		}
 		
@@ -80,21 +87,41 @@ public class ChatFormatter {
 		RangeRepository repo = RangeRepository.getRangeRepository();
 		BaseComponent formattedMessage = new TextComponent();
 		
-		for(String component : config.getEmoteFormat().split(DELIMITER_REGEX)) {
-			if(component.equals(ConfigUtils.prefixPlaceholder)) {
-				formattedMessage.addExtra(repo.getRangePrefixComponent(range));
+		for(String component : config.getNoRecipientMessage().split(DELIMITER_REGEX)) {
+			if(component.equals(rangePlaceholder)) {
+				formattedMessage = new TextComponent(formattedMessage,repo.getRangePrefixComponent(range));
 			}
-			else if(component.equals(ConfigUtils.playerPlaceholder)) {
-				formattedMessage.addExtra(TextUtils.getNameTextComponent(player));
+			else if(component.equals(playerPlaceholder)) {
+				formattedMessage = new TextComponent(formattedMessage,TextUtils.getNameTextComponent(player));
 			}
-			else if(component.equals(ConfigUtils.messagePlaceholder)) {
-				formattedMessage.addExtra(TextUtils.getMessageTextComponents(message, player, range));
+			else if(component.equals(messagePlaceholder)) {
+				formattedMessage = new TextComponent(formattedMessage,TextUtils.getMessageTextComponents(message, player, range));
 			}
 			else {
-				formattedMessage.addExtra(TextUtils.formatText(component, ChatColor.GRAY));
+				formattedMessage = new TextComponent(formattedMessage,TextUtils.formatText(component, ChatColor.GRAY));
 			}
 		}
 		
+		return formattedMessage;
+	}
+
+	public static BaseComponent getRangeChangedMessage(Player player, ChatRange range) {
+		Config config = Config.getConfig();
+		RangeRepository repo = RangeRepository.getRangeRepository();
+
+		BaseComponent formattedMessage = new TextComponent();
+
+		for(String component : config.getChangedRangeMessage().split(DELIMITER_REGEX)){
+			if(component.equals(rangePlaceholder)) {
+				formattedMessage = new TextComponent(formattedMessage,repo.getRangePrefixComponent(range));
+			}
+			else if(component.equals(playerPlaceholder)) {
+				formattedMessage = new TextComponent(formattedMessage,TextUtils.getNameTextComponent(player));
+			}
+			else {
+				formattedMessage = new TextComponent(formattedMessage,TextUtils.formatText(component, config.getDefaultColor()));
+			}
+		}
 		return formattedMessage;
 	}
 }

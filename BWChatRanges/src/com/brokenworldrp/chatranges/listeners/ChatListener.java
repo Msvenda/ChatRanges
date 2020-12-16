@@ -6,18 +6,18 @@ import com.brokenworldrp.chatranges.utils.MessageUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerChatEvent;
 
 import java.util.Optional;
 
 public class ChatListener implements Listener{
 
 	@EventHandler
-	public void playerChat(AsyncPlayerChatEvent event) {
+	public void playerChat(PlayerChatEvent event) {
 		Player sender = event.getPlayer();
 		RangeRepository repo = RangeRepository.getRangeRepository();
 		Optional<ChatRange> chatRange = repo.getPlayerChatRange(sender.getUniqueId());
 		chatRange.ifPresent(range -> MessageUtils.sendRangedMessage(sender, event.getMessage(), range));
-
+		event.setCancelled(true);
 	}
 }

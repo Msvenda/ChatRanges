@@ -1,8 +1,8 @@
 package com.brokenworldrp.chatranges.utils;
 
 import com.brokenworldrp.chatranges.chatrange.*;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -12,17 +12,18 @@ public class MessageUtils {
 		Config config = Config.getConfig();
 		Recipients recipients = range.getPlayersInRange(player);
 		
-		BaseComponent formattedMessage = ChatFormatter.getFormatedMessage(player, message, range);
+		BaseComponent formattedMessage = ChatFormatter.getFormattedMessage(player, message, range);
 
 		if(config.isRecipientNumberLoggingEnabled()){
-			Bukkit.getLogger().info(String.format("%s (%d, %d, %d)",
+			LoggingUtil.logMessage(String.format("%s %s(%d, %d, %d)",
 					formattedMessage.toLegacyText(),
+					ChatColor.GRAY,
 					recipients.recipients.size(),
 					recipients.hiddenRecipients.size(),
 					recipients.spies.size()));
 		}
 		else{
-			Bukkit.getLogger().info(formattedMessage.toLegacyText());
+			LoggingUtil.logMessage(formattedMessage.toLegacyText());
 		}
 
 		player.spigot().sendMessage(formattedMessage);
@@ -41,7 +42,7 @@ public class MessageUtils {
 			p.spigot().sendMessage(formattedMessage);
 		}
 		//send to spies
-		BaseComponent formattedSpyMessage = ChatFormatter.getFormatedSpyMessage(formattedMessage);
+		BaseComponent formattedSpyMessage = ChatFormatter.getFormattedSpyMessage(formattedMessage);
 		for(Player p : recipients.spies) {
 			p.spigot().sendMessage(formattedSpyMessage);
 		}
@@ -52,18 +53,19 @@ public class MessageUtils {
 		Config config = Config.getConfig();
 		Recipients recipients = range.getPlayersInRange(player);
 		
-		BaseComponent formattedMessage = ChatFormatter.getFormatedEmote(player, message, range);
+		BaseComponent formattedMessage = ChatFormatter.getFormattedEmote(player, message, range);
 
 		//log message
 		if(config.isRecipientNumberLoggingEnabled()){
-			Bukkit.getLogger().info(String.format("%s (%d, %d, %d)",
+			LoggingUtil.logMessage(String.format("%s %s(%d, %d, %d)",
 					formattedMessage.toLegacyText(),
+					ChatColor.GRAY,
 					recipients.recipients.size(),
 					recipients.hiddenRecipients.size(),
 					recipients.spies.size()));
 		}
 		else{
-			Bukkit.getLogger().info(formattedMessage.toLegacyText());
+			LoggingUtil.logMessage(formattedMessage.toLegacyText());
 		}
 
 		player.spigot().sendMessage(formattedMessage);
@@ -88,7 +90,7 @@ public class MessageUtils {
 			p.spigot().sendMessage(formattedMessage);
 		}
 		//send to spies
-		BaseComponent formattedSpyMessage = ChatFormatter.getFormatedSpyMessage(formattedMessage);
+		BaseComponent formattedSpyMessage = ChatFormatter.getFormattedSpyMessage(formattedMessage);
 		for(Player p : recipients.spies) {
 			p.spigot().sendMessage(formattedSpyMessage);
 		}
@@ -147,5 +149,9 @@ public class MessageUtils {
 	public static void sendSpyDisabledMessage(Player player) {
 		Config config = Config.getConfig();
 		player.sendMessage(String.format("%s%s", config.getDefaultColor(), config.getSpyToggleOffMessage()));
+	}
+
+	public static void sendRangeChangedMessage(Player player, ChatRange chatRange) {
+		player.spigot().sendMessage(ChatFormatter.getRangeChangedMessage(player, chatRange));
 	}
 }

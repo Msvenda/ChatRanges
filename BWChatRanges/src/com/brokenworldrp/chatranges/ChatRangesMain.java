@@ -7,16 +7,14 @@ import com.brokenworldrp.chatranges.chatrange.RangeRepository;
 import com.brokenworldrp.chatranges.commands.*;
 import com.brokenworldrp.chatranges.listeners.ChatListener;
 import com.brokenworldrp.chatranges.utils.CommandUtils;
+import com.brokenworldrp.chatranges.utils.LoggingUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.logging.Logger;
 
 public class ChatRangesMain extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		Logger logger = Bukkit.getLogger();
 
 		this.getServer().getPluginManager().registerEvents(new ChatListener(), this);
 		Bukkit.getPluginCommand("ranges").setExecutor(new CheckRangeCommand());
@@ -35,7 +33,7 @@ public class ChatRangesMain extends JavaPlugin {
 				CommandUtils.registerCommand(rangeCommand, this);
 			} catch (ReflectiveOperationException e) {
 				e.printStackTrace();
-				logger.warning(String.format("Failed to create command for range %s", range.getName()));
+				LoggingUtil.logWarning(String.format("Failed to create command for range %s", range.getName()));
 
 			}
 		}
@@ -49,7 +47,7 @@ public class ChatRangesMain extends JavaPlugin {
 				CommandUtils.registerCommand(emoteCommand, this);
 			} catch (ReflectiveOperationException e) {
 				e.printStackTrace();
-				logger.warning(String.format("Failed to create command for emote %s", range.getName()));
+				LoggingUtil.logWarning(String.format("Failed to create command for emote %s", range.getName()));
 			}
 		}
 	}

@@ -5,9 +5,7 @@ import com.brokenworldrp.chatranges.chatrange.EmoteRange;
 import com.brokenworldrp.chatranges.chatrange.Range;
 import com.brokenworldrp.chatranges.chatrange.RangeRepository;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -35,17 +33,17 @@ public class TextUtils {
 		//create shared hover text
 		String clickCommand = String.format("/%s ", range.getCommand());
 		BaseComponent hoverText = new TextComponent(simpleKeyValueComponent("Name:", range.getName()));
-		hoverText.addExtra(simpleKeyValueComponent("Range:", String.format("%.1f blocks", range.getRange())));
-		hoverText.addExtra(TextUtils.simpleKeyValueComponent("Cross-Dimensional", range.isCrossDimensional() ?
+		hoverText = new TextComponent(hoverText, simpleKeyValueComponent("Range:", String.format("%.1f blocks", range.getRange())));
+		hoverText = new TextComponent(hoverText, TextUtils.simpleKeyValueComponent("Cross-Dimensional", range.isCrossDimensional() ?
 				"\u2713" : "\u2717"));
-		hoverText.addExtra(simpleKeyValueComponent("Command:", clickCommand));
+		hoverText = new TextComponent(hoverText, simpleKeyValueComponent("Command:", clickCommand));
 		for(String alias : range.getAliases()) {
-			hoverText.addExtra(simpleListComponent(alias));
+			hoverText = new TextComponent(hoverText, simpleListComponent(alias));
 		}
-		hoverText.addExtra(simpleKeyValueComponent("Prefix:", range.getPrefix()));
-		hoverText.addExtra(simpleKeyValueComponent("Colour:", range.getColor().getName()));
-		hoverText.addExtra(NEW_LINE);
-		hoverText.addExtra(new TextComponent("Click to change to this range.\nShift-click to pre-type \"" + clickCommand + "\""));
+		hoverText = new TextComponent(hoverText, simpleKeyValueComponent("Prefix:", range.getPrefix()));
+		hoverText = new TextComponent(hoverText, simpleKeyValueComponent("Colour:", range.getColor().getName()));
+		hoverText = new TextComponent(hoverText, NEW_LINE);
+		hoverText = new TextComponent(hoverText, new TextComponent("Click to change to this range.\nShift-click to pre-type \"" + clickCommand + "\""));
 		
 		
 		
@@ -68,7 +66,7 @@ public class TextUtils {
 	}
 
 	public static BaseComponent getNameTextComponent(Player player) {
-		BaseComponent hoverText = new TextComponent();
+		BaseComponent[] hoverText;
 		String commandSuggest = "/msg " + player.getName() + " ";
 		
 		//get formatted nick
@@ -83,13 +81,17 @@ public class TextUtils {
 		BaseComponent key = new TextComponent("Nickname: ");
 		key.setColor(COLOUR_KEY);
 		BaseComponent value = new TextComponent(displayName);
-		hoverText.addExtra(new TextComponent(prefix, key, value, NEW_LINE));
+
 		//real name
-		hoverText.addExtra(simpleKeyValueComponent("Real name", player.getName()));
-		hoverText.addExtra(NEW_LINE);
-		hoverText.addExtra(String.format("Click to pre-type \"%s\".", commandSuggest));
-		
-		displayName.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] { hoverText }));
+		hoverText = new ComponentBuilder(prefix)
+				.append(key)
+				.append(value)
+				.append(NEW_LINE)
+				.append(simpleKeyValueComponent("Real name", player.getName()))
+				.append(NEW_LINE)
+				.append(String.format("Click to pre-type \"%s\".", commandSuggest)).create();
+
+		displayName.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText));
 		displayName.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, commandSuggest));
 		
 		return displayName;
@@ -98,7 +100,7 @@ public class TextUtils {
 	public static BaseComponent getMessageTextComponents(String m, Player p, Range r) {
 		Config config = Config.getConfig();
 
-		BaseComponent message = new TextComponent();
+		BaseComponent message = new TextComponent("");
 		//surround @hand/offhand with brackets for easier recognition
 		if(config.isDisplayItemInChatEnabled()){
 			if( m.contains("@hand") || m.contains("@offhand")) {
@@ -110,16 +112,16 @@ public class TextUtils {
 		for(String part : parts) {
 			if(part.equals("@hand")) {
 				ItemStack heldItem = p.getInventory().getItemInMainHand();
-				message.addExtra(getItemComponent(heldItem));
+				message = new TextComponent(message, getItemComponent(heldItem));
 			}
 			else if(part.equals("@offhand")) {
 				ItemStack heldItem = p.getInventory().getItemInOffHand();
-				message.addExtra(getItemComponent(heldItem));
+				message = new TextComponent(message, getItemComponent(heldItem));
 			}
 			else {
 				BaseComponent partText = new TextComponent(part);
 				partText.setColor(r.getColor());
-				message.addExtra(partText);
+				message = new TextComponent(message, partText);
 			}
 		}
 		return message;
@@ -131,7 +133,7 @@ public class TextUtils {
 		BaseComponent message = new TextComponent();
 		String[] splitMessage = m.split("\"");
 		//if there is an odd number of elements, there is an event number of quotations
-		
+
 		for(int i = 0; i < splitMessage.length; i++) {
 			//surround @hand/offhand with brackets for easier recognition
 			if(config.isDisplayItemInChatEnabled()){
@@ -144,11 +146,11 @@ public class TextUtils {
 			for(String part : parts) {
 				if(part.equals("@hand")) {
 					ItemStack heldItem = p.getInventory().getItemInMainHand();
-					message.addExtra(getItemComponent(heldItem));
+					message = new TextComponent(message, getItemComponent(heldItem));
 				}
 				else if(part.equals("@offhand")) {
 					ItemStack heldItem = p.getInventory().getItemInOffHand();
-					message.addExtra(getItemComponent(heldItem));
+					message = new TextComponent(message, getItemComponent(heldItem));
 				}
 				else {
 					BaseComponent partText = new TextComponent(part);
@@ -158,7 +160,7 @@ public class TextUtils {
 					else {
 						partText.setColor(i%2 == 0 ? r.getColor() : r.getRangeColor());
 					}
-					message.addExtra(partText);
+					message = new TextComponent(message, partText);
 				}
 			}
 		}
@@ -201,15 +203,15 @@ public class TextUtils {
 			BaseComponent e = r.isCrossDimensional() 
 					? new TextComponent(prefix, repo.getRangeTextComponent(r), crossDimension, NEW_LINE)
 					: new TextComponent(prefix, repo.getRangeTextComponent(r), NEW_LINE);
-			listText.addExtra(e);
+			listText = new TextComponent(listText, e);
 		}
 		return listText;
 	}
 	
-	private static BaseComponent simpleKeyValueComponent(String k, String v) {
+	public static BaseComponent simpleKeyValueComponent(String k, String v) {
 		BaseComponent prefix = new TextComponent("- ");
 		prefix.setColor(COLOUR_PREFIX);
-		BaseComponent key = new TextComponent(k);
+		BaseComponent key = new TextComponent(k+": ");
 		key.setColor(COLOUR_KEY);
 		BaseComponent value = new TextComponent(v);
 		value.setColor(COLOUR_VALUE);
@@ -217,8 +219,8 @@ public class TextUtils {
 		return new TextComponent(prefix, key, value, NEW_LINE);
 		
 	}
-	
-	private static BaseComponent simpleListComponent(String v) {
+
+	public static BaseComponent simpleListComponent(String v) {
 		BaseComponent spacer = new TextComponent("  ");
 		BaseComponent prefix = new TextComponent("- ");
 		prefix.setColor(COLOUR_PREFIX);
@@ -229,10 +231,12 @@ public class TextUtils {
 	
 	private static BaseComponent getItemComponent(ItemStack heldItem) {
 		BaseComponent itemText = new TextComponent("[");
-		for(BaseComponent c : TextComponent.fromLegacyText(heldItem.getItemMeta().getDisplayName())) {
-			itemText.addExtra(c);
-		}
-		itemText.addExtra(new TextComponent("]"));
+
+		itemText = heldItem.getItemMeta().getDisplayName().isEmpty()
+				? new TextComponent(itemText, new TextComponent(heldItem.getType().name().replace("_", " ").toLowerCase()))
+				: new TextComponent(itemText, new TextComponent(heldItem.getItemMeta().getDisplayName()));
+		itemText = new TextComponent(itemText, new TextComponent("]"));
+
 		String itemJson;
 		try {
 			itemJson = getItemJson(heldItem);
