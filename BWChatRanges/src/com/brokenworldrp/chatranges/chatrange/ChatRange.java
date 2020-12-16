@@ -1,5 +1,7 @@
 package com.brokenworldrp.chatranges.chatrange;
 
+import com.brokenworldrp.chatranges.data.Config;
+import com.brokenworldrp.chatranges.data.RangeRepository;
 import com.brokenworldrp.chatranges.utils.Recipients;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -13,17 +15,17 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ChatRange implements Range{
-	private String key;
-	private String rangeName;
-	private String rangeCommand;
-	private String rangeDescription;
-	private List<String> rangeAliases;
-	private double rangeRadius;
-	private boolean crossDimension;
-	private ChatColor rangeColor;
-	private String rangePrefix;
-	private String rangeWritePermission;
-	private String rangeReadPermission;
+	private final String key;
+	private final String rangeName;
+	private final String rangeCommand;
+	private final String rangeDescription;
+	private final List<String> rangeAliases;
+	private final double rangeRadius;
+	private final boolean crossDimension;
+	private final ChatColor rangeColor;
+	private final String rangePrefix;
+	private final String rangeWritePermission;
+	private final String rangeReadPermission;
 
     public ChatRange(String rangeKey, String name, String description, String command, List<String> aliases,
 					 boolean crossDimension, Double distance, ChatColor colour, String prefix,

@@ -12,7 +12,7 @@ public class CheckRangeCommand implements CommandExecutor{
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!(sender instanceof Player))	{
-			MessageUtils.sendPlayersOnlyMessage(sender);
+			MessageUtils.sendPlayersOnlyError(sender);
 			return true;
 		}
 		Player player = (Player) sender;

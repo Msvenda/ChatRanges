@@ -1,6 +1,6 @@
 package com.brokenworldrp.chatranges.commands;
 
-import com.brokenworldrp.chatranges.chatrange.RangeRepository;
+import com.brokenworldrp.chatranges.data.RangeRepository;
 import com.brokenworldrp.chatranges.utils.MessageUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,7 +13,7 @@ public class SpyCommand implements CommandExecutor{
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		RangeRepository repo = RangeRepository.getRangeRepository();
 		if(!(sender instanceof Player))	{
-			MessageUtils.sendPlayersOnlyMessage(sender);
+			MessageUtils.sendPlayersOnlyError(sender);
 			return true;
 		}
 		Player player = (Player) sender;
@@ -31,6 +31,7 @@ public class SpyCommand implements CommandExecutor{
 				MessageUtils.sendSpyDisabledMessage(player);
 			}
 			else{
+				MessageUtils.sendMissingMessageEmoteError(player);
 				return false;
 			}
 		}

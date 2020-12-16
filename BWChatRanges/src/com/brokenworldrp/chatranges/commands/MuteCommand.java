@@ -1,7 +1,7 @@
 package com.brokenworldrp.chatranges.commands;
 
 import com.brokenworldrp.chatranges.chatrange.ChatRange;
-import com.brokenworldrp.chatranges.chatrange.RangeRepository;
+import com.brokenworldrp.chatranges.data.RangeRepository;
 import com.brokenworldrp.chatranges.utils.MessageUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,7 +15,7 @@ public class MuteCommand  implements CommandExecutor{
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!(sender instanceof Player))	{
-			MessageUtils.sendPlayersOnlyMessage(sender);
+			MessageUtils.sendPlayersOnlyError(sender);
 			return true;
 		}
 		if(args.length < 1) {
@@ -27,7 +27,7 @@ public class MuteCommand  implements CommandExecutor{
 		
 		Optional<ChatRange> range = repo.getChatRangeByKey(args[0]);
 		if(!range.isPresent()){
-			MessageUtils.sendRangeNotFoundMessage(player);
+			MessageUtils.sendRangeNotFoundError(player);
 			return false;
 		}
 		repo.toggleMuteRangeForPlayer(player, range.get().getKey());

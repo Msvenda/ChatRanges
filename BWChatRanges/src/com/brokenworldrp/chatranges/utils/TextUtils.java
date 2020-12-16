@@ -1,12 +1,11 @@
 package com.brokenworldrp.chatranges.utils;
 
-import com.brokenworldrp.chatranges.chatrange.Config;
+import com.brokenworldrp.chatranges.data.Config;
 import com.brokenworldrp.chatranges.chatrange.EmoteRange;
 import com.brokenworldrp.chatranges.chatrange.Range;
-import com.brokenworldrp.chatranges.chatrange.RangeRepository;
+import com.brokenworldrp.chatranges.data.RangeRepository;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -16,10 +15,6 @@ public class TextUtils {
 	private static final String DELIMITER_REGEX = "[{}]+";
 	
 	private static final TextComponent NEW_LINE = new TextComponent("\n");
-	
-	public static final ChatColor COLOUR_PREFIX = ChatColor.GRAY;
-	public static final ChatColor COLOUR_KEY = ChatColor.GOLD;
-	public static final ChatColor COLOUR_VALUE = ChatColor.AQUA;
 	
 
 	
@@ -66,6 +61,7 @@ public class TextUtils {
 	}
 
 	public static BaseComponent getNameTextComponent(Player player) {
+		Config config = Config.getConfig();
 		BaseComponent[] hoverText;
 		String commandSuggest = "/msg " + player.getName() + " ";
 		
@@ -77,9 +73,9 @@ public class TextUtils {
 		
 		//nickname
 		BaseComponent prefix = new TextComponent("- ");
-		prefix.setColor(COLOUR_PREFIX);
+		prefix.setColor(config.getPrefixColor());
 		BaseComponent key = new TextComponent("Nickname: ");
-		key.setColor(COLOUR_KEY);
+		key.setColor(config.getListKeyColor());
 		BaseComponent value = new TextComponent(displayName);
 
 		//real name
@@ -175,13 +171,14 @@ public class TextUtils {
 	}
 	
 	public static BaseComponent getSpyTextComponent() {
+		Config config = Config.getConfig();
 		BaseComponent spyText = new TextComponent("[spy]");
 		spyText.setColor(ChatColor.GRAY);
 		
 		String command = "/spy toggle";
 		
 		BaseComponent hoverText = new TextComponent("You are seeing this message because you are out of range of the sender and you have Spy enabled.\n\nClick to toggle spy status.");
-		hoverText.setColor(COLOUR_KEY);
+		hoverText.setColor(config.getListKeyColor());
 		
 		spyText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {hoverText}));
 		spyText.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
@@ -197,35 +194,39 @@ public class TextUtils {
 		prefix.setColor(baseColor);
 		BaseComponent crossDimension = new TextComponent(" *");
 		crossDimension.setColor(baseColor);
-		BaseComponent listText = new TextComponent("Availiable ranges: \n");
+		BaseComponent listText = new TextComponent("Available ranges: \n");
 		listText.setColor(baseColor);
 		for(Range r : repo.getChatRangeList()) {
-			BaseComponent e = r.isCrossDimensional() 
-					? new TextComponent(prefix, repo.getRangeTextComponent(r), crossDimension, NEW_LINE)
-					: new TextComponent(prefix, repo.getRangeTextComponent(r), NEW_LINE);
-			listText = new TextComponent(listText, e);
+			if(player.hasPermission(r.getWritePermission())){
+				BaseComponent e = r.isCrossDimensional()
+						? new TextComponent(prefix, repo.getRangeTextComponent(r), crossDimension, NEW_LINE)
+						: new TextComponent(prefix, repo.getRangeTextComponent(r), NEW_LINE);
+				listText = new TextComponent(listText, e);
+			}
 		}
 		return listText;
 	}
 	
 	public static BaseComponent simpleKeyValueComponent(String k, String v) {
+		Config config = Config.getConfig();
 		BaseComponent prefix = new TextComponent("- ");
-		prefix.setColor(COLOUR_PREFIX);
+		prefix.setColor(config.getPrefixColor());
 		BaseComponent key = new TextComponent(k+": ");
-		key.setColor(COLOUR_KEY);
+		key.setColor(config.getListKeyColor());
 		BaseComponent value = new TextComponent(v);
-		value.setColor(COLOUR_VALUE);
+		value.setColor(config.getListValueColour());
 		
 		return new TextComponent(prefix, key, value, NEW_LINE);
 		
 	}
 
 	public static BaseComponent simpleListComponent(String v) {
+		Config config = Config.getConfig();
 		BaseComponent spacer = new TextComponent("  ");
 		BaseComponent prefix = new TextComponent("- ");
-		prefix.setColor(COLOUR_PREFIX);
+		prefix.setColor(config.getPrefixColor());
 		BaseComponent value = new TextComponent(v);
-		value.setColor(COLOUR_VALUE);
+		value.setColor(config.getListValueColour());
 		return new TextComponent(spacer, prefix, value, NEW_LINE);
 	}
 	

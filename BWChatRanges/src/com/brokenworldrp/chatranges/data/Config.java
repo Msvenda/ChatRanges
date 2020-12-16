@@ -1,5 +1,7 @@
-package com.brokenworldrp.chatranges.chatrange;
+package com.brokenworldrp.chatranges.data;
 
+import com.brokenworldrp.chatranges.chatrange.ChatRange;
+import com.brokenworldrp.chatranges.chatrange.EmoteRange;
 import com.brokenworldrp.chatranges.utils.LoggingUtil;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -9,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,52 +34,52 @@ public class Config {
     private ChatColor defaultListValueColor = ChatColor.AQUA;
 
     //messages
-    String mChangedRange;
-    String mJoinRange;
-    String mChatNoRecpients;
-    String mSpyStatusOff;
-    String mSpyStatusOn;
-    String mSpyOn;
-    String mSpyOff;
-    String mSpyInfo;
-    String mMuteOn;
-    String mMuteOff;
+    final String mChangedRange;
+    final String mJoinRange;
+    final String mChatNoRecpients;
+    final String mSpyStatusOff;
+    final String mSpyStatusOn;
+    final String mSpyOn;
+    final String mSpyOff;
+    final String mSpyInfo;
+    final String mMuteOn;
+    final String mMuteOff;
 
     //errors
-    String ePlayersOnly;
-    String ePlayerNoPermission;
-    String eRetrievingRange;
-    String eSettingRange;
-    String eRevertRange;
-    String eMissingCommandRange;
-    String eRetrievingCurrentRange;
-    String eRetrievingRetrievingRanges;
-    String eRetrievingCommandEmote;
-    String eMissingCommandEmote;
-    String eMissingMessageEmote;
-    String eMissingRangeMute;
-    String eRetrievingSpy;
-    String eSpyToggle;
-    String eItemParsing;
-    String eMutingUnknownRange;
+    final String ePlayersOnly;
+    final String ePlayerNoPermission;
+    final String eRetrievingRange;
+    final String eSettingRange;
+    final String eRevertRange;
+    final String eMissingCommandRange;
+    final String eRetrievingCurrentRange;
+    final String eRetrievingRetrievingRanges;
+    final String eRetrievingCommandEmote;
+    final String eMissingCommandEmote;
+    final String eMissingMessageEmote;
+    final String eMissingRangeMute;
+    final String eRetrievingSpy;
+    final String eSpyToggle;
+    final String eItemParsing;
+    final String eMutingUnknownRange;
 
     //formats
-    String messageFormat;
-    String emoteFormat;
-    String rangesCommandPrefix;
+    final String messageFormat;
+    final String emoteFormat;
+    final String rangesCommandPrefix;
     //spy
-    String spyTag;
+    final String spyTag;
     ChatColor spyColor;
-    String spyPosition;
+    final String spyPosition;
 
     //features
-    boolean aliasSingleMessage;
-    boolean noRecipientAlert;
-    boolean displayItemInChat;
-    boolean radialDistanceCheck;
-    boolean recipientNumberLogging;
+    final boolean aliasSingleMessage;
+    final boolean noRecipientAlert;
+    final boolean displayItemInChat;
+    final boolean radialDistanceCheck;
+    final boolean recipientNumberLogging;
 
-    public static Config getConfig(){
+    public static Config getConfig() throws NullPointerException{
         if(config_instance == null){
             config_instance = new Config();
         }
@@ -96,8 +99,7 @@ public class Config {
             if (!parent.exists() && !parent.mkdirs()) {
                 throw new IllegalStateException("Couldn't create dir: " + parent);
             }
-            configFile.createNewFile();
-            Files.write(Paths.get(CONFIG_LOCATION), configData.getBytes());
+            Files.copy(getClass().getResourceAsStream("config.yml"), Paths.get(CONFIG_LOCATION), StandardCopyOption.REPLACE_EXISTING);
             LoggingUtil.logInfo(String.format("Config file created at '%s'", CONFIG_LOCATION));
         } catch (IOException e) {
             LoggingUtil.logWarning(String.format("Failed creating config file at '%s'", CONFIG_LOCATION));
@@ -105,7 +107,7 @@ public class Config {
         }
     }
 
-    private Config() {
+    private Config() throws NullPointerException{
         RangeRepository repo = RangeRepository.getRangeRepository();
 
         File configFile = new File(CONFIG_LOCATION);
@@ -126,13 +128,13 @@ public class Config {
         //load defaults
 
         try{
-            defaultsSection = defaultsSection.getConfigurationSection("colour");
-            defaultMessageColor = getColourFromString(defaultsSection.getString("message"));
-            defaultErrorColor = getColourFromString(defaultsSection.getString("error"));
-            defaultPrefixColor = getColourFromString(defaultsSection.getString("prefix"));
-            defaultsSection = defaultsSection.getConfigurationSection("list");
-            defaultListKeyColor = getColourFromString(defaultsSection.getString("key"));
-            defaultListValueColor = getColourFromString(defaultsSection.getString("value"));
+            defaultsSection = defaultsSection.contains("colour") ? defaultsSection.getConfigurationSection("colour") : defaultsSection;
+            defaultMessageColor = getColourFromString(defaultsSection.getString("message", ""));
+            defaultErrorColor = getColourFromString(defaultsSection.getString("error", ""));
+            defaultPrefixColor = getColourFromString(defaultsSection.getString("prefix", ""));
+            defaultsSection = defaultsSection.contains("list") ? defaultsSection.getConfigurationSection("list") : defaultsSection;
+            defaultListKeyColor = getColourFromString(defaultsSection.getString("key", ""));
+            defaultListValueColor = getColourFromString(defaultsSection.getString("value", ""));
         } catch(IllegalArgumentException e){
             LoggingUtil.logWarning("Failed to load default colour configuration, using default values");
             e.printStackTrace();
@@ -286,240 +288,85 @@ public class Config {
         spyPosition = formattingSection.getString("position", "prefix");
     }
 
+    //format
     public String getMessageFormat() {
         return messageFormat;
     }
-
+    public String getEmoteFormat() {
+        return emoteFormat;
+    }
     public String getSpyPosition() {
         return spyPosition;
     }
 
-    public String getEmoteFormat() {
-        return emoteFormat;
-    }
-
-    public ChatColor getErrorColor() {
-        return defaultErrorColor;
-    }
-
-    public String getPlayersOnlyMessage() {
-        return ePlayersOnly;
-    }
-
+    //info messages
     public String getNoRecipientMessage() {
         return mChatNoRecpients;
     }
-
-    public String getNoPermissionMessage() {
-        return ePlayerNoPermission;
-    }
-
-    public String getMissingCommandRangeMessage() {
-        return eMissingCommandRange;
-    }
-
-    public String getNoEmoteMessage() {
-        return eMissingCommandEmote;
-    }
-
-    public ChatColor getDefaultColor() {
-        return defaultMessageColor;
-    }
-
     public String getSpyStatusOnMessage() {
         return mSpyStatusOn;
     }
-
     public String getSpyStatusOffMessage() {
         return mSpyStatusOff;
     }
-
     public String getSpyToggleOnMessage() {
         return mSpyOn;
     }
-
     public String getSpyToggleOffMessage() {
         return mSpyOff;
     }
-
     public String getChangedRangeMessage() {
         return mChangedRange;
     }
 
+    //error messages
+    public String getNoPermissionError() {
+        return ePlayerNoPermission;
+    }
+    public String getMissingCommandRangeError() {
+        return eMissingCommandRange;
+    }
+    public String getPlayersOnlyError() {
+        return ePlayersOnly;
+    }
+    public String getMissingCommandEmoteError(){
+        return eMissingCommandEmote;
+    }
+    public String getMissingMessageEmoteError(){
+        return eMissingMessageEmote;
+    }
+
+    //colours
+    public ChatColor getDefaultColor() {
+        return defaultMessageColor;
+    }
+    public ChatColor getPrefixColor() {
+        return defaultPrefixColor;
+    }
+    public ChatColor getListValueColour() {
+        return defaultListValueColor;
+    }
+    public ChatColor getListKeyColor() {
+        return defaultListKeyColor;
+    }
+    public ChatColor getErrorColor() {
+        return defaultErrorColor;
+    }
+
+    //features
     public boolean isAliasSingleMessageEnabled(){
         return aliasSingleMessage;
     }
-
     public boolean isDisplayItemInChatEnabled() {
         return displayItemInChat;
     }
-
     public boolean isNoRecipientAlertEnabled(){
         return noRecipientAlert;
     }
-
     public boolean isRadialDistanceCheckEnabled(){
         return radialDistanceCheck;
     }
-
     public boolean isRecipientNumberLoggingEnabled() {
         return recipientNumberLogging;
     }
-
-    private final String configData = "# \n" +
-            "# ===== ChatRange config.yml =====\n" +
-            "# \n" +
-            "\n" +
-            "# ========================================\n" +
-            "# ranges - Add your own custom range to the list. Use the following template:\n" +
-            "# ........................................\n" +
-            "# ranges:\n" +
-            "#   <name of range>: Name of the range, this would only be used within this config\n" +
-            "#     name: Name of the range to be displayed\n" +
-            "#     description: Description to be shown for the command\n" +
-            "#                  Placeholders accepted:\n" +
-            "#                    - {range}           - Range name\n" +
-            "#                    - {distance}        - Distance of this range\n" +
-            "#                    - {permission}      - Permission required to use this command\n" +
-            "#                    - {read-permission} - Permission required to see messages sent in this range\n" +
-            "#     command: Command to switch to this range, whitespace characters not allowed\n" +
-            "#     aliases: Different command names that can be used to trigger the command\n" +
-            "#     cross-dimension: If this range work across dimensions/worlds\n" +
-            "#     distance: Distance of how far can this chat range can reach, decimals allowed\n" +
-            "#     colour: Colour of the chat in this range\n" +
-            "#     prefix: Prefix to be appended before the chat, usually used to denote the range\n" +
-            "#     permission: Permission required to run this command, blank if not required\n" +
-            "#                 This will be appended after 'chatrange.range.'\n" +
-            "#                 Leave blank to ignore.\n" +
-            "#     read-permission: Permission required to see messages sent in this range\n" +
-            "#                      This will be appended after 'chatrange.read.'\n" +
-            "#                      Leave blank to ignore.\n" +
-            "#     language: Options regarding languages here. Leave blank to ignore.\n" +
-            "#       permission: Permission required to see this message without any alteration.\n" +
-            "#                   Leave blank to not use language feature.\n" +
-            "#       dictionary: File name of the CSV file which holds the words to translate to\n" +
-            "#                   File should be placed in a folder named \"language\" in the folder which this config is in\n" +
-            "#                   First column should hold the original word to look for\n" +
-            "#                   Subsequent columns would be the words should be replaced with\n" +
-            "#                   If there are no words to be replaced with, the word would be removed\n" +
-            "#       # Options for when words are not found in the dictionary\n" +
-            "#       randomise-message: Randomises the word arrangement \n" +
-            "#       collapse-repeating-characters: Reduces repeating characters to a single character\n" +
-            "# ========================================\n" +
-            "ranges:\n" +
-            "  local:\n" +
-            "    name: 'Local'\n" +
-            "    command: 'local'\n" +
-            "    description: 'Changes your chat range to {range}. [{distance}]'\n" +
-            "    aliases:\n" +
-            "      - 'l'\n" +
-            "    cross-dimension: false\n" +
-            "    distance: 20\n" +
-            "    colour: 'White'\n" +
-            "    prefix: '[Local]'\n" +
-            "  global:\n" +
-            "    name: 'Global'\n" +
-            "    command: 'global'\n" +
-            "    description: 'Changes your chat range to {range}. [{distance}]'\n" +
-            "    aliases:\n" +
-            "      - 'g'\n" +
-            "    cross-dimension: true\n" +
-            "    colour: 'Aqua'\n" +
-            "    prefix: '[Global]'\n" +
-            "\n" +
-            "# ========================================\n" +
-            "# emotes - Add your own custom emote to the list. Use the following template:\n" +
-            "# ........................................\n" +
-            "# emotes:\n" +
-            "#   <name of emotes>: Name of the emote, this would only be used within this config\n" +
-            "#     name: Name of the range to be displayed\n" +
-            "#     description: Description to be shown for the command\n" +
-            "#                  Placeholders accepted:\n" +
-            "#                    - {range}      - Range name this emote belongs to\n" +
-            "#                    - {distance}   - Distance of this emote, defined by the range\n" +
-            "#                    - {permission} - Permission required to use this command\n" +
-            "#     command: Command to use this emote, whitespace characters not allowed\n" +
-            "#     range: Name of range this emote belongs to, must be declared above\n" +
-            "#     aliases: Different command names that can be used to trigger the command\n" +
-            "#     prefix: Prefix to be appended before the chat, usually to denote the emote\n" +
-            "#     permission: Permission required to run this command, blank if not required\n" +
-            "#                 This will be appended after 'chatrange.emote.'\n" +
-            "# ========================================\n" +
-            "emotes:\n" +
-            "  local:\n" +
-            "    name: 'Local'\n" +
-            "    description: 'Sends an emote at the {range} range.'\n" +
-            "    command: 'mel'\n" +
-            "    range: 'Local'\n" +
-            "    aliases:\n" +
-            "      - 'emote'\n" +
-            "      - 'emotelocal'\n" +
-            "    colour: 'Dark Purple'\n" +
-            "    prefix: '[Local]'\n" +
-            "\n" +
-            "\n" +
-            "features:\n" +
-            "# Only sends the current message in the range desired if the alias of the command is used\n" +
-            "  alias-single-message: true\n" +
-            "# Notifies the player if there are no recipients for the message sent\n" +
-            "  no-recipients-alert: true\n" +
-            "# Using @hand will share a snapshot of the item on your hand to the chat\n" +
-            "  display-item-in-chat: true\n" +
-            "# More precise range check using radial distance rather than cube, more expensive\n" +
-            "  radial-distance-check: false\n" +
-            "# Number of message recipients will show up in console next to message in format (recievers, hidden recievers, spies)\n" +
-            "  recipient-number-logging: false\n" +
-            "\n" +
-            "defaults:\n" +
-            "  range: 'Global'\n" +
-            "  colour:\n" +
-            "    message: 'Gold'\n" +
-            "    error: 'Red'\n" +
-            "    prefix: 'Gray'\n" +
-            "    list:\n" +
-            "      key: 'Gold'\n" +
-            "      value: 'Aqua'\n" +
-            "\n" +
-            "messages:\n" +
-            "  message-changed-range: 'Your range have been set to {range}.'\n" +
-            "  message-join-range: 'Your range is currently set to {range}.'\n" +
-            "  message-chat-no-recipient: 'No players received your message in channel: {range}'\n" +
-            "  message-spy-status-on: 'Message spying is currently activated.'\n" +
-            "  message-spy-status-off: 'Message spying is currently deactivated.'\n" +
-            "  message-spy-on: 'Message spying is now activated.'\n" +
-            "  message-spy-off: 'Message spying is now deactivated.'\n" +
-            "  message-spy-info: 'You are seeing this message because you are out of range of the sender and have Spy enabled.'\n" +
-            "  message-mute-on: 'You have now muted {range}. This will automatically unmute upon the next login.'\n" +
-            "  message-mute-off: 'You have now unmuted {range}.'\n" +
-            "  \n" +
-            "  error-players-only: 'Sorry, this command can only be used by players.'\n" +
-            "  error-player-no-permission: 'Sorry, you do not have the permissions to run this command.'\n" +
-            "  error-retrieving-command-range: 'Sorry, an unexpected error has occurred while trying to retrieve information about this command.'\n" +
-            "  error-setting-range: 'Sorry, an unexpected error has occurred while trying to set your range.'\n" +
-            "  error-revert-range: 'Sorry, an unexpected error has occurred while trying to revert your range.'\n" +
-            "  error-missing-command-range: 'Sorry, we are unable to find the range for this command.'\n" +
-            "  error-retrieving-current-range: 'Sorry, an unexpected error has occurred while trying to retrieve your current range.'\n" +
-            "  error-retrieving-ranges: 'Sorry, an unexpected error has occurred while trying to retrieve all of the available ranges.'\n" +
-            "  error-retrieving-command-emote: 'Sorry, an unexpected error has occurred while trying to retrieve information about this command.'\n" +
-            "  error-missing-command-emote: 'Sorry, we are unable to find the emote for this command.'\n" +
-            "  error-missing-message-emote: 'Please include a message for your emote.'\n" +
-            "  error-missing-range-mute: 'Please provide the channel you want to mute or unmute.'\n" +
-            "  error-retrieving-spy: 'Sorry, an unexpected error has occurred while trying to retrieve your spy status.'\n" +
-            "  error-spy-toggle: 'Sorry, an unexpected error has occurred while trying to toggle your spy mode.'\n" +
-            "  error-item-parsing: 'Sorry, an unexpected error has occurred while trying to format the item.'\n" +
-            "  error-mute-unknown-range: 'Sorry, I am unable to find the range ''{range}''.'\n" +
-            "\n" +
-            "formatting:\n" +
-            "  message: '{prefix} {player}: {message}'\n" +
-            "  emote: '* {prefix} {player} {message}'\n" +
-            "  command:\n" +
-            "    ranges:\n" +
-            "      message-prefix: 'Available Ranges:'\n" +
-            "    spy:\n" +
-            "      tag: '[Spy]'\n" +
-            "      colour: 'Gray'\n" +
-            "      # 'prefix' (default) or 'suffix'\n" +
-            "      position: 'prefix'\n";
-
-
 }

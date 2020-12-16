@@ -1,6 +1,6 @@
 package com.brokenworldrp.chatranges.listeners;
 
-import com.brokenworldrp.chatranges.chatrange.RangeRepository;
+import com.brokenworldrp.chatranges.data.RangeRepository;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

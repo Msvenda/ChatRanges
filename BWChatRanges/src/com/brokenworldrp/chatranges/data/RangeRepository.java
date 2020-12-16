@@ -1,5 +1,8 @@
-package com.brokenworldrp.chatranges.chatrange;
+package com.brokenworldrp.chatranges.data;
 
+import com.brokenworldrp.chatranges.chatrange.ChatRange;
+import com.brokenworldrp.chatranges.chatrange.EmoteRange;
+import com.brokenworldrp.chatranges.chatrange.Range;
 import com.brokenworldrp.chatranges.utils.LoggingUtil;
 import com.brokenworldrp.chatranges.utils.TextUtils;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -15,7 +18,6 @@ import java.util.*;
 
 public class RangeRepository {
     private static final String RANGE_FILE = "plugins/BWChatRanges/rangeData.yml";
-    private static final String YAML_KEY = "player-ranges";
 
     private static RangeRepository singleton;
 
@@ -127,7 +129,7 @@ public class RangeRepository {
             defaultKey = range.getKey();
         }
         chatRanges.put(range.getKey(), range);
-        createRangeComponents(range);
+        mutedRanges.put(range.getKey(), new ArrayList<>());
     }
     public void addEmoteRange(EmoteRange range){
         emoteRanges.put(range.getKey(), range);
@@ -196,11 +198,21 @@ public class RangeRepository {
     }
 
     public BaseComponent getRangePrefixComponent(Range range) {
+        initializeComponent(range);
         return rangePrefixComponents.get(range.getKey());
     }
 
     public BaseComponent getRangeTextComponent(Range range) {
+        initializeComponent(range);
         return rangeTextComponents.get(range.getKey());
+    }
+    private void initializeComponent(Range range){
+        if(rangePrefixComponents.containsKey(range.getKey())){
+            return;
+        }
+        if(!TextUtils.createRangeComponents(range)){
+            LoggingUtil.logWarning(String.format("Failed creating chat components for range '%s'!", range.getKey()));
+        }
     }
 
     public void playerSetup(UUID id) {

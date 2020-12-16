@@ -1,6 +1,8 @@
 package com.brokenworldrp.chatranges.utils;
 
 import com.brokenworldrp.chatranges.chatrange.*;
+import com.brokenworldrp.chatranges.data.Config;
+import com.brokenworldrp.chatranges.data.RangeRepository;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.command.CommandSender;
@@ -102,26 +104,37 @@ public class MessageUtils {
 		player.spigot().sendMessage(noRecipientMessage);
 	}
 	
-	public static void sendPlayersOnlyMessage(CommandSender sender) {
+	public static void sendPlayersOnlyError(CommandSender sender) {
 		Config config = Config.getConfig();
-		sender.sendMessage(String.format("%s%s", config.getErrorColor(), config.getPlayersOnlyMessage()));
+		sender.sendMessage(String.format("%s%s", config.getErrorColor(), config.getPlayersOnlyError()));
 	}
 	
-	public static void sendNoPermissionMessage(Player player) {
+	public static void sendNoPermissionError(Player player) {
 		Config config = Config.getConfig();
-		player.sendMessage(String.format("%s%s", config.getErrorColor(), config.getNoPermissionMessage()));
+		player.sendMessage(String.format("%s%s", config.getErrorColor(), config.getNoPermissionError()));
 	}
 
-	public static void sendMissingCommandRangeMessage(Player player) {
+	public static void sendMissingCommandRangeError(Player player) {
 		Config config = Config.getConfig();
-		player.sendMessage(String.format("%s%s", config.getErrorColor(), config.getMissingCommandRangeMessage()));
-		
+		player.sendMessage(String.format("%s%s", config.getErrorColor(), config.getMissingCommandRangeError()));
 	}
-	
-	public static void sendRangeNotFoundMessage(Player player) {
+
+	public static void sendMissingMessageEmoteError(Player player){
 		Config config = Config.getConfig();
-		player.sendMessage(String.format("%s%s", config.getErrorColor(), config.getMissingCommandRangeMessage()));
-		
+		player.sendMessage(String.format("%s%s", config.getErrorColor(), config.getMissingMessageEmoteError()));
+
+	}
+
+	public static void sendMissingCommandEmoteError(Player player){
+		Config config = Config.getConfig();
+		player.sendMessage(String.format("%s%s", config.getErrorColor(), config.getMissingCommandEmoteError()));
+
+	}
+
+	public static void sendRangeNotFoundError(Player player) {
+		Config config = Config.getConfig();
+		player.sendMessage(String.format("%s%s", config.getErrorColor(), config.getMissingCommandRangeError()));
+
 	}
 
 	public static void sendRangeList(Player player) {
