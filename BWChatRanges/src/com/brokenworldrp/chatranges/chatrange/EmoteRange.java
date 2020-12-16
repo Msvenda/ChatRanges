@@ -80,5 +80,8 @@ public class EmoteRange implements Range {
 	public String getWritePermission() {
 		return emoteWritePermission;
 	}
+	public ChatRange getEmoteRange(){
+    	return emoteRange;
+	}
 	
 }

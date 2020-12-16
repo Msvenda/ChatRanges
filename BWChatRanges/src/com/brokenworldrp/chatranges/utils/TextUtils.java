@@ -1,8 +1,9 @@
 package com.brokenworldrp.chatranges.utils;
 
-import com.brokenworldrp.chatranges.data.Config;
+import com.brokenworldrp.chatranges.chatrange.ChatRange;
 import com.brokenworldrp.chatranges.chatrange.EmoteRange;
 import com.brokenworldrp.chatranges.chatrange.Range;
+import com.brokenworldrp.chatranges.data.Config;
 import com.brokenworldrp.chatranges.data.RangeRepository;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
@@ -18,7 +19,7 @@ public class TextUtils {
 	
 
 	
-	public static Boolean createRangeComponents(Range range) {
+	public static Boolean createRangeComponents(ChatRange range) {
 		RangeRepository repo = RangeRepository.getRangeRepository();
 
 		if(repo.containsComponentsFor(range.getKey())) {
@@ -125,7 +126,7 @@ public class TextUtils {
 	
 	public static BaseComponent getEmoteTextComponents(String m, Player p, EmoteRange r) {
 		Config config = Config.getConfig();
-
+		m = m+" ";
 		BaseComponent message = new TextComponent();
 		String[] splitMessage = m.split("\"");
 		//if there is an odd number of elements, there is an event number of quotations
@@ -150,7 +151,7 @@ public class TextUtils {
 				}
 				else {
 					BaseComponent partText = new TextComponent(part);
-					if(splitMessage.length%2 == 1) {
+					if(splitMessage.length%2 == 0) {
 						partText.setColor(r.getColor());
 					}
 					else {
@@ -231,22 +232,34 @@ public class TextUtils {
 	}
 	
 	private static BaseComponent getItemComponent(ItemStack heldItem) {
-		BaseComponent itemText = new TextComponent("[");
-
-		itemText = heldItem.getItemMeta().getDisplayName().isEmpty()
-				? new TextComponent(itemText, new TextComponent(heldItem.getType().name().replace("_", " ").toLowerCase()))
-				: new TextComponent(itemText, new TextComponent(heldItem.getItemMeta().getDisplayName()));
-		itemText = new TextComponent(itemText, new TextComponent("]"));
-
-		String itemJson;
-		try {
-			itemJson = getItemJson(heldItem);
-			itemText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[] {new TextComponent(itemJson)}));
-		} catch (ReflectiveOperationException e) {
-			itemText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {new TextComponent("Error fetching item data")}));
-			e.printStackTrace();
+		Config config = Config.getConfig();
+		BaseComponent itemText;
+		if(heldItem != null && heldItem.hasItemMeta()){
+			itemText = new TextComponent("[");
+			if(heldItem.getItemMeta().getDisplayName().isEmpty()){
+				itemText = new TextComponent(itemText, new TextComponent(heldItem.getType().name().replace("_", " ").toLowerCase()));
+			}
+			else{
+				System.out.println(heldItem.getItemMeta().getDisplayName());
+				BaseComponent itemC = new TextComponent(heldItem.getItemMeta().getDisplayName());
+				itemText = new TextComponent(itemText, itemC);
+			}
+			itemText = new TextComponent(itemText,  new TextComponent(ChatColor.WHITE + "]"));
+			String itemJson;
+			try {
+				itemJson = getItemJson(heldItem);
+				itemText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[] {new TextComponent(itemJson)}));
+			} catch (ReflectiveOperationException e) {
+				itemText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {new TextComponent(config.getItemParsingError())}));
+				e.printStackTrace();
+			}
+		}
+		else{
+			itemText = new TextComponent("[Empty hand]");
+			itemText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {new TextComponent("An empty hand.")}));
 		}
 		return itemText;
+
 	}
 	
 	private static String getItemJson(ItemStack item) throws ReflectiveOperationException

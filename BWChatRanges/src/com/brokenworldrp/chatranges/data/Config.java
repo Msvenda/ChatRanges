@@ -335,6 +335,9 @@ public class Config {
     public String getMissingMessageEmoteError(){
         return eMissingMessageEmote;
     }
+    public String getItemParsingError(){
+        return eItemParsing;
+    }
 
     //colours
     public ChatColor getDefaultColor() {

@@ -10,9 +10,8 @@ import org.bukkit.entity.Player;
 
 public class MessageUtils {
 	
-	public static void sendRangedMessage(Player player, String message, ChatRange range) {
+	public static void sendRangedMessage(Player player, String message, ChatRange range, Recipients recipients) {
 		Config config = Config.getConfig();
-		Recipients recipients = range.getPlayersInRange(player);
 		
 		BaseComponent formattedMessage = ChatFormatter.getFormattedMessage(player, message, range);
 
@@ -51,9 +50,8 @@ public class MessageUtils {
 		
 	}
 	
-	public static void sendRangedEmote(Player player, String message, EmoteRange range) {
+	public static void sendRangedEmote(Player player, String message, EmoteRange range, Recipients recipients) {
 		Config config = Config.getConfig();
-		Recipients recipients = range.getPlayersInRange(player);
 		
 		BaseComponent formattedMessage = ChatFormatter.getFormattedEmote(player, message, range);
 

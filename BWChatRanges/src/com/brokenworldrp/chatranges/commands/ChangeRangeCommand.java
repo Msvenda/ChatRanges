@@ -5,6 +5,7 @@ import com.brokenworldrp.chatranges.data.Config;
 import com.brokenworldrp.chatranges.data.RangeRepository;
 import com.brokenworldrp.chatranges.listeners.RunnableMessageContainer;
 import com.brokenworldrp.chatranges.utils.MessageUtils;
+import com.brokenworldrp.chatranges.utils.Recipients;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -48,8 +49,10 @@ public class ChangeRangeCommand extends BukkitCommand{
 				? Optional.of(StringUtils.join(args, ' '))
 				: Optional.empty();
 
+		Recipients recipients = range.get().getPlayersInRange(player);
+
 		message.ifPresent(s -> {
-			Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getPluginManager().getPlugin("ChatRanges"), new RunnableMessageContainer(player, s, range.get()));
+			Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getPluginManager().getPlugin("ChatRanges"), new RunnableMessageContainer(player, s, range.get(), recipients));
 		});
 
 		if(config.isAliasSingleMessageEnabled() && message.isPresent()){

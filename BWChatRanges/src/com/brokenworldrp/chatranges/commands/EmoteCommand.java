@@ -4,6 +4,7 @@ import com.brokenworldrp.chatranges.chatrange.EmoteRange;
 import com.brokenworldrp.chatranges.data.RangeRepository;
 import com.brokenworldrp.chatranges.listeners.RunnableMessageContainer;
 import com.brokenworldrp.chatranges.utils.MessageUtils;
+import com.brokenworldrp.chatranges.utils.Recipients;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -44,7 +45,8 @@ public class EmoteCommand extends BukkitCommand {
 				? Optional.of(StringUtils.join(args, ' '))
 				: Optional.empty();
 		if(message.isPresent()) {
-			Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getPluginManager().getPlugin("ChatRanges"), new RunnableMessageContainer(player, message.get(), range.get()));
+			Recipients recipients = range.get().getPlayersInRange(player);
+			Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getPluginManager().getPlugin("ChatRanges"), new RunnableMessageContainer(player, message.get(), range.get(), recipients));
 		}
 		else {
 			MessageUtils.sendMissingMessageEmoteError(player);

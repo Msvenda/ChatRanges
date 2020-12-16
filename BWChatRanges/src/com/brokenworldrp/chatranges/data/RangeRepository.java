@@ -197,16 +197,40 @@ public class RangeRepository {
         rangePrefixComponents.put(key, messageText);
     }
 
-    public BaseComponent getRangePrefixComponent(Range range) {
-        initializeComponent(range);
-        return rangePrefixComponents.get(range.getKey());
-    }
+//    public BaseComponent getRangePrefixComponent(Range range) {
+//        initializeComponent(range);
+//        return rangePrefixComponents.get(range.getKey());
+//    }
+//
+//    public BaseComponent getRangeTextComponent(Range range) {
+//        initializeComponent(range);
+//        return rangeTextComponents.get(range.getKey());
+//    }
 
     public BaseComponent getRangeTextComponent(Range range) {
-        initializeComponent(range);
-        return rangeTextComponents.get(range.getKey());
+        if(range instanceof  EmoteRange){
+            ChatRange r = ((EmoteRange)range).getEmoteRange();
+            initializeComponent(r);
+            return rangeTextComponents.get(r.getKey());
+        }
+        else{
+            initializeComponent((ChatRange)range);
+            return rangeTextComponents.get(range.getKey());
+        }
     }
-    private void initializeComponent(Range range){
+
+    public BaseComponent getRangePrefixComponent(Range range) {
+        if(range instanceof  EmoteRange){
+            ChatRange r = ((EmoteRange)range).getEmoteRange();
+            initializeComponent(r);
+            return rangePrefixComponents.get(r.getKey());
+        }
+        else{
+            initializeComponent((ChatRange)range);
+            return rangePrefixComponents.get(range.getKey());
+        }
+    }
+    private void initializeComponent(ChatRange range){
         if(rangePrefixComponents.containsKey(range.getKey())){
             return;
         }
