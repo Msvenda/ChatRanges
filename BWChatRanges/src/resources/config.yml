@@ -105,7 +105,7 @@ features:
   alias-single-message: true
   # Notifies the player if there are no recipients for the message sent
   no-recipients-alert: true
-  # Using @hand will share a snapshot of the item on your hand to the chat
+  # Using @hand or @offhand will share a snapshot of the item on your hand/offhand to the chat
   display-item-in-chat: true
   # More precise range check using radial distance rather than cube, more expensive
   radial-distance-check: false
