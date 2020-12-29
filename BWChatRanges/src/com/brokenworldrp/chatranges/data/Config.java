@@ -99,7 +99,7 @@ public class Config {
             if (!parent.exists() && !parent.mkdirs()) {
                 throw new IllegalStateException("Couldn't create dir: " + parent);
             }
-            Files.copy(getClass().getResourceAsStream("config.yml"), Paths.get(CONFIG_LOCATION), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(getClass().getResourceAsStream("/config.yml"), Paths.get(CONFIG_LOCATION), StandardCopyOption.REPLACE_EXISTING);
             LoggingUtil.logInfo(String.format("Config file created at '%s'", CONFIG_LOCATION));
         } catch (IOException e) {
             LoggingUtil.logWarning(String.format("Failed creating config file at '%s'", CONFIG_LOCATION));
