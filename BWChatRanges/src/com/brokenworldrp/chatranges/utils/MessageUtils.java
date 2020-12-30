@@ -165,4 +165,7 @@ public class MessageUtils {
 	public static void sendRangeChangedMessage(Player player, ChatRange chatRange) {
 		player.spigot().sendMessage(ChatFormatter.getRangeChangedMessage(player, chatRange));
 	}
+	public static void sendRangeJoinMessage(Player player, ChatRange chatRange) {
+		player.spigot().sendMessage(ChatFormatter.getRangeJoinMessage(player, chatRange));
+	}
 }

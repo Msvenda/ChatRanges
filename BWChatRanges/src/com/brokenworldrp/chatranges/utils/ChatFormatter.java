@@ -126,4 +126,24 @@ public class ChatFormatter {
 		}
 		return formattedMessage;
 	}
+
+	public static BaseComponent getRangeJoinMessage(Player player, ChatRange range) {
+		Config config = Config.getConfig();
+		RangeRepository repo = RangeRepository.getRangeRepository();
+
+		BaseComponent formattedMessage = new TextComponent();
+
+		for(String component : config.getJoinRangeMessage().split(DELIMITER_REGEX)){
+			if(component.equals(RANGE_PLACEHOLDER)) {
+				formattedMessage = new TextComponent(formattedMessage,repo.getRangePrefixComponent(range));
+			}
+			else if(component.equals(PLAYER_PLACEHOLDER)) {
+				formattedMessage = new TextComponent(formattedMessage,TextUtils.getNameTextComponent(player));
+			}
+			else {
+				formattedMessage = new TextComponent(formattedMessage,TextUtils.formatText(component, config.getDefaultColor()));
+			}
+		}
+		return formattedMessage;
+	}
 }

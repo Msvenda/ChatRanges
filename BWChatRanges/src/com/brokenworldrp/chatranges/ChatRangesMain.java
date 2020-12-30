@@ -6,6 +6,7 @@ import com.brokenworldrp.chatranges.chatrange.EmoteRange;
 import com.brokenworldrp.chatranges.data.RangeRepository;
 import com.brokenworldrp.chatranges.commands.*;
 import com.brokenworldrp.chatranges.listeners.ChatListener;
+import com.brokenworldrp.chatranges.listeners.JoinListener;
 import com.brokenworldrp.chatranges.utils.CommandUtils;
 import com.brokenworldrp.chatranges.utils.LoggingUtil;
 import org.bukkit.Bukkit;
@@ -16,6 +17,7 @@ public class ChatRangesMain extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		this.getServer().getPluginManager().registerEvents(new ChatListener(), this);
+		this.getServer().getPluginManager().registerEvents(new JoinListener(), this);
 		Bukkit.getPluginCommand("ranges").setExecutor(new CheckRangeCommand());
 		Bukkit.getPluginCommand("spy").setExecutor(new SpyCommand());
 		Bukkit.getPluginCommand("mute").setExecutor(new MuteCommand());

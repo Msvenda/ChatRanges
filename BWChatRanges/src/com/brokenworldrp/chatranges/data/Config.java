@@ -222,7 +222,7 @@ public class Config {
         }
 
         //load default range
-        Optional<String> defaultRangeKey = Optional.ofNullable(defaultsSection.getString("range"));
+        Optional<String> defaultRangeKey = Optional.ofNullable(config.getConfigurationSection("defaults").getString("range"));
         if(defaultRangeKey.isPresent()){
             if(!repo.setDefaultRangeKey(defaultRangeKey.get())){
                 LoggingUtil.logWarning(String.format("Failed to set '%s' as default range, defaulted to '%s'.", defaultRangeKey.get(), repo.getDefaultKey()));
@@ -318,6 +318,9 @@ public class Config {
     public String getChangedRangeMessage() {
         return mChangedRange;
     }
+    public String getJoinRangeMessage() {
+        return mJoinRange;
+    }
 
     //error messages
     public String getNoPermissionError() {
@@ -372,4 +375,6 @@ public class Config {
     public boolean isRecipientNumberLoggingEnabled() {
         return recipientNumberLogging;
     }
+
+
 }

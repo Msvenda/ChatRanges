@@ -39,25 +39,31 @@ public class ChangeRangeCommand extends BukkitCommand{
 		Config config = Config.getConfig();
 		RangeRepository repo = RangeRepository.getRangeRepository();
 
+		//get the commands range
 		Optional<ChatRange> range = repo.getChatRangeByKey(rangeKey);
 		if(!range.isPresent()){
 			MessageUtils.sendMissingCommandRangeError(player);
 			return true;
 		}
-		
+
+		//combine args into message string
 		Optional<String> message = args.length > 0 
 				? Optional.of(StringUtils.join(args, ' '))
 				: Optional.empty();
 
+		//get recipients
 		Recipients recipients = range.get().getPlayersInRange(player);
 
+		//send messages
 		message.ifPresent(s -> {
 			Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getPluginManager().getPlugin("ChatRanges"), new RunnableMessageContainer(player, s, range.get(), recipients));
 		});
-
+		//if single message alias is enabled and message is present, return
 		if(config.isAliasSingleMessageEnabled() && message.isPresent()){
 			return true;
 		}
+
+		//send range chaged message
 		MessageUtils.sendRangeChangedMessage(player, range.get());
 		if(!repo.setPlayerRangebyKey(player.getUniqueId(), rangeKey)){
 			MessageUtils.sendMissingCommandRangeError(player);

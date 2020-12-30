@@ -113,7 +113,7 @@ features:
   recipient-number-logging: true
 
 defaults:
-  range: 'Global'
+  range: 'global'
   colour:
     message: 'Gold'
     error: 'Red'

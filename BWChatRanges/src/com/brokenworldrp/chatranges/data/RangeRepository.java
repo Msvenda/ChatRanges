@@ -239,7 +239,15 @@ public class RangeRepository {
         }
     }
 
-    public void playerSetup(UUID id) {
-        playerRanges.put(id, defaultKey);
+    public ChatRange playerSetup(UUID id) {
+        if(playerRanges.containsKey(id)){
+            if(!chatRanges.containsKey(playerRanges.get(id))){
+                playerRanges.put(id, defaultKey);
+            }
+        }
+        else{
+            playerRanges.put(id, defaultKey);
+        }
+        return chatRanges.get(playerRanges.get(id));
     }
 }
