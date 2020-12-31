@@ -9,6 +9,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -25,10 +26,9 @@ public class RangeRepository {
     private Map<String, EmoteRange> emoteRanges;
     private Map<String, ChatRange> chatRanges;
     private Map<UUID, String> playerRanges;
-    private Map<String, List<Player>> mutedRanges;
+    private Map<String, Set<UUID>> mutedRanges;
     private Map<String, BaseComponent> rangePrefixComponents;
-    private Map<String, BaseComponent> rangeTextComponents;
-    private Set<Player> spies;
+    private Set<UUID> spies;
 
     public static RangeRepository getRangeRepository(){
         if(singleton == null){
@@ -42,7 +42,6 @@ public class RangeRepository {
         chatRanges = new HashMap<>();
         mutedRanges = new HashMap<>();
         spies = new HashSet<>();
-        rangeTextComponents = new HashMap<>();
         rangePrefixComponents = new HashMap<>();
         loadRepositoryData();
     }
@@ -102,13 +101,6 @@ public class RangeRepository {
         messageText.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, clickCommand));
 
         rangePrefixComponents.put(range.getKey(), messageText);
-        //create range text component
-        messageText = new TextComponent(range.getName());
-        messageText.setColor(range.getColor());
-
-        messageText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {hoverText}));
-        messageText.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, clickCommand));
-        rangeTextComponents.put(range.getKey(), messageText);
         return true;
     }
 
@@ -129,14 +121,16 @@ public class RangeRepository {
             defaultKey = range.getKey();
         }
         chatRanges.put(range.getKey(), range);
-        mutedRanges.put(range.getKey(), new ArrayList<>());
+        mutedRanges.put(range.getKey(), new HashSet<>());
     }
     public void addEmoteRange(EmoteRange range){
         emoteRanges.put(range.getKey(), range);
     }
 
     public Optional<ChatRange> getPlayerChatRange(UUID playerID) {
+        //playerSetup(playerID);
         return Optional.ofNullable(chatRanges.get(playerRanges.get(playerID)));
+
     }
 
     public Optional<ChatRange> getChatRangeByKey(String key) {
@@ -164,24 +158,36 @@ public class RangeRepository {
         return new ArrayList<>(emoteRanges.values());
     }
 
-    public void toggleMuteRangeForPlayer(Player player, String rangeKey) {
-        if(mutedRanges.get(rangeKey).contains(player)) {
-            mutedRanges.get(rangeKey).remove(player);
-            return;
-        }
-        mutedRanges.get(rangeKey).add(player);
+    public boolean getMuteStatusForPlayer(Player player, String rangeKey){
+        return mutedRanges.get(rangeKey).contains(player.getUniqueId());
     }
 
-    public Set<Player> getSpies(){
-        return spies;
+    public void muteRangeForPlayer(Player player, String rangeKey){
+        mutedRanges.get(rangeKey).add(player.getUniqueId());
+    }
+
+    public void unmuteRangeForPlayer(Player player, String rangeKey){
+        mutedRanges.get(rangeKey).remove(player.getUniqueId());
+    }
+
+    public List<Player> getSpies(){
+        List<Player> players = new ArrayList<>();
+        for(UUID id : spies){
+            players.add(Bukkit.getPlayer(id));
+        }
+        return players;
+    }
+
+    public boolean getSpyStatusForPlayer(Player player){
+        return spies.contains(player.getUniqueId());
     }
 
     public void enableSpyForPlayer(Player player) {
-        spies.add(player);
+        spies.add(player.getUniqueId());
     }
 
     public void disableSpyForPlayer(Player player) {
-        spies.remove(player);
+        spies.remove(player.getUniqueId());
     }
 
 
@@ -195,28 +201,6 @@ public class RangeRepository {
 
     public void addRangeTextComponent(String key, BaseComponent messageText) {
         rangePrefixComponents.put(key, messageText);
-    }
-
-//    public BaseComponent getRangePrefixComponent(Range range) {
-//        initializeComponent(range);
-//        return rangePrefixComponents.get(range.getKey());
-//    }
-//
-//    public BaseComponent getRangeTextComponent(Range range) {
-//        initializeComponent(range);
-//        return rangeTextComponents.get(range.getKey());
-//    }
-
-    public BaseComponent getRangeTextComponent(Range range) {
-        if(range instanceof  EmoteRange){
-            ChatRange r = ((EmoteRange)range).getEmoteRange();
-            initializeComponent(r);
-            return rangeTextComponents.get(r.getKey());
-        }
-        else{
-            initializeComponent((ChatRange)range);
-            return rangeTextComponents.get(range.getKey());
-        }
     }
 
     public BaseComponent getRangePrefixComponent(Range range) {
@@ -239,15 +223,30 @@ public class RangeRepository {
         }
     }
 
-    public ChatRange playerSetup(UUID id) {
-        if(playerRanges.containsKey(id)){
-            if(!chatRanges.containsKey(playerRanges.get(id))){
-                playerRanges.put(id, defaultKey);
-            }
+    public ChatRange playerSetup(Player player) {
+        UUID id = player.getUniqueId();
+        if(!playerRanges.containsKey(id)){
+            setPlayerRangebyKey(id, defaultKey);
         }
-        else{
-            playerRanges.put(id, defaultKey);
+        else if(!chatRanges.containsKey(playerRanges.get(id))){
+            setPlayerRangebyKey(id, defaultKey);
         }
         return chatRanges.get(playerRanges.get(id));
     }
+
+    public void playerCleanup(Player player) {
+        for(Set<UUID> muted : mutedRanges.values()){
+            muted.remove(player.getUniqueId());
+        }
+    }
+
+    public List<Player> getMutedPlayersForRange(String key) {
+        List<Player> players = new ArrayList<>();
+        for(UUID id : mutedRanges.get(key)){
+            players.add(Bukkit.getPlayer(id));
+        }
+        return players;
+    }
+
+
 }

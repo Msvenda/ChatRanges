@@ -45,7 +45,11 @@ public class ChangeRangeCommand extends BukkitCommand{
 			MessageUtils.sendMissingCommandRangeError(player);
 			return true;
 		}
-
+		//unmute range
+		if(repo.getMuteStatusForPlayer(player, range.get().getKey())){
+			repo.unmuteRangeForPlayer(player, range.get().getKey());
+			MessageUtils.sendRangeUnmutedMessage(player, range.get());
+		}
 		//combine args into message string
 		Optional<String> message = args.length > 0 
 				? Optional.of(StringUtils.join(args, ' '))

@@ -152,7 +152,7 @@ public class Config {
                 String description = range.getString("description", "Changes your chat range to {range}. [{distance}]");
                 List<String> aliases = range.getStringList("aliases");
                 boolean crossDimension = range.getBoolean("cross-dimension", false);
-                Double distance = range.getDouble("distance", 10);
+                Double distance = range.getDouble("distance", -1);
                 //try get color, use default on fail
                 ChatColor colour;
                 try {
@@ -236,8 +236,8 @@ public class Config {
         mChangedRange = messagingSection.getString("message-changed-range", "Your range have been set to {range}.");
         mJoinRange = messagingSection.getString("message-join-range", "Your range is currently set to {range}.");
         mChatNoRecpients = messagingSection.getString(" message-chat-no-recipient", "No players received your message in channel: {range}");
-        mSpyStatusOff = messagingSection.getString("message-spy-status-on", "Message spying is currently activated.");
-        mSpyStatusOn = messagingSection.getString("message-spy-status-off", "Message spying is currently deactivated.");
+        mSpyStatusOn = messagingSection.getString("message-spy-status-on", "Message spying is currently activated.");
+        mSpyStatusOff = messagingSection.getString("message-spy-status-off", "Message spying is currently deactivated.");
         mSpyOn = messagingSection.getString("message-spy-on", "Message spying is now activated.");
         mSpyOff = messagingSection.getString("message-spy-off", "Message spying is now deactivated.");
         mSpyInfo = messagingSection.getString("message-spy-info", "You are seeing this message because you are out of range of the sender and have Spy enabled.");
@@ -321,6 +321,15 @@ public class Config {
     public String getJoinRangeMessage() {
         return mJoinRange;
     }
+    public String getRangeMutedMessage() {
+        return mMuteOn;
+    }
+    public String getRangeUnmutedMessage() {
+        return mMuteOff;
+    }
+    public String getMutingUnknownRangeError() {
+        return eMutingUnknownRange;
+    }
 
     //error messages
     public String getNoPermissionError() {
@@ -375,6 +384,7 @@ public class Config {
     public boolean isRecipientNumberLoggingEnabled() {
         return recipientNumberLogging;
     }
+
 
 
 }

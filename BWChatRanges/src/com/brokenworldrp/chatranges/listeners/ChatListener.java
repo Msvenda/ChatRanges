@@ -2,6 +2,7 @@ package com.brokenworldrp.chatranges.listeners;
 
 import com.brokenworldrp.chatranges.chatrange.ChatRange;
 import com.brokenworldrp.chatranges.data.RangeRepository;
+import com.brokenworldrp.chatranges.utils.MessageUtils;
 import com.brokenworldrp.chatranges.utils.Recipients;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -20,7 +21,13 @@ public class ChatListener implements Listener{
 		RangeRepository repo = RangeRepository.getRangeRepository();
 		Optional<ChatRange> chatRange = repo.getPlayerChatRange(sender.getUniqueId());
 		chatRange.ifPresent(range -> {
+			//unmute range
+			if(repo.getMuteStatusForPlayer(sender, range.getKey())){
+				repo.unmuteRangeForPlayer(sender, range.getKey());
+				MessageUtils.sendRangeUnmutedMessage(sender, range);
+			}
 			Recipients recipients = range.getPlayersInRange(sender);
+			//send message
 			Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getPluginManager().getPlugin("ChatRanges"), new RunnableMessageContainer(sender, event.getMessage(), range, recipients));
 		});
 		event.setCancelled(true);

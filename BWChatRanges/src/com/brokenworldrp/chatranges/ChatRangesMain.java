@@ -7,6 +7,7 @@ import com.brokenworldrp.chatranges.data.RangeRepository;
 import com.brokenworldrp.chatranges.commands.*;
 import com.brokenworldrp.chatranges.listeners.ChatListener;
 import com.brokenworldrp.chatranges.listeners.JoinListener;
+import com.brokenworldrp.chatranges.listeners.LeaveListener;
 import com.brokenworldrp.chatranges.utils.CommandUtils;
 import com.brokenworldrp.chatranges.utils.LoggingUtil;
 import org.bukkit.Bukkit;
@@ -18,10 +19,12 @@ public class ChatRangesMain extends JavaPlugin {
 	public void onEnable() {
 		this.getServer().getPluginManager().registerEvents(new ChatListener(), this);
 		this.getServer().getPluginManager().registerEvents(new JoinListener(), this);
+		this.getServer().getPluginManager().registerEvents(new LeaveListener(), this);
 		Bukkit.getPluginCommand("ranges").setExecutor(new CheckRangeCommand());
 		Bukkit.getPluginCommand("spy").setExecutor(new SpyCommand());
 		Bukkit.getPluginCommand("mute").setExecutor(new MuteCommand());
 
+		//initialize config
 		try {
 			Config.getConfig();
 		} catch (NullPointerException e){
@@ -30,9 +33,14 @@ public class ChatRangesMain extends JavaPlugin {
 			LoggingUtil.logWarning("Disabling");
 			getServer().getPluginManager().disablePlugin(this);
 		}
+		//set spy permission message
+		Bukkit.getPluginCommand("spy").setPermissionMessage(Config.getConfig().getNoPermissionError());
+
 		RangeRepository repo = RangeRepository.getRangeRepository();
 
 		for(ChatRange range : repo.getChatRangeList()){
+			//initialize prefix components
+			repo.getRangePrefixComponent(range);
 			//create range command and register it
 			ChangeRangeCommand rangeCommand = new ChangeRangeCommand(range);
 			rangeCommand.setDescription(range.getDescription());
@@ -43,7 +51,6 @@ public class ChatRangesMain extends JavaPlugin {
 			} catch (ReflectiveOperationException e) {
 				e.printStackTrace();
 				LoggingUtil.logWarning(String.format("Failed to create command for range %s", range.getName()));
-
 			}
 		}
 

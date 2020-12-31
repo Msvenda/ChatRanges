@@ -9,6 +9,7 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,21 +49,19 @@ public class ChatRange implements Range{
     	RangeRepository repo = RangeRepository.getRangeRepository();
     	Config config = Config.getConfig();
 
-		Set<Player> allRecipients;
+		List<Player> allRecipients;
 		//get players with permission in range
 		if(rangeRadius <= 0) {
 			if(crossDimension){
 				allRecipients = Bukkit.getOnlinePlayers().stream()
 						.filter(pl -> !pl.equals(player))
-						.filter(pl -> pl.hasPermission(rangeReadPermission))
-						.collect(Collectors.toSet());
+						.collect(Collectors.toList());
 			}
 			else{
 				allRecipients = Bukkit.getOnlinePlayers().stream()
 						.filter(pl -> !pl.equals(player))
-						.filter(pl -> pl.hasPermission(rangeReadPermission))
 						.filter(pl -> pl.getWorld().equals(player.getWorld()))
-						.collect(Collectors.toSet());
+						.collect(Collectors.toList());
 			}
 		}
 		else {
@@ -71,33 +70,55 @@ public class ChatRange implements Range{
 				.filter(en -> en instanceof Player)
 				.map(en -> (Player) en)
 				.filter(pl -> !pl.equals(player))
-				.filter(pl -> pl.hasPermission(rangeReadPermission))
-					.collect(Collectors.toSet());
+					.collect(Collectors.toList());
 			if(config.isRadialDistanceCheckEnabled()){
 				allRecipients = allRecipients.stream().filter(pl -> pl.getLocation().distance(player.getLocation()) < rangeRadius)
-						.collect(Collectors.toSet());
+						.collect(Collectors.toList());
 			}
 		}
+		//filter out by perm
+		if(!rangeReadPermission.isEmpty()){
+			allRecipients = allRecipients.stream()
+					.filter(pl ->  pl.hasPermission(rangeReadPermission))
+					.collect(Collectors.toList());
+		}
+
+
+		//filter out muted players
+		allRecipients.removeAll(repo.getMutedPlayersForRange(key));
 
 		//filter out invisible/hidden/gm3 players
-		
-		Recipients rec = new Recipients();
-		//filtered list of visible recipients
-		rec.recipients = allRecipients.stream()
+		List<Player> hiddenRecipients = allRecipients.stream()
 				.filter(pl -> !player.canSee(pl)
-				|| pl.hasPotionEffect(PotionEffectType.INVISIBILITY)
-				|| pl.getGameMode() == GameMode.SPECTATOR)
-				.collect(Collectors.toSet());
+						|| pl.hasPotionEffect(PotionEffectType.INVISIBILITY)
+						|| pl.getGameMode() == GameMode.SPECTATOR)
+				.collect(Collectors.toList());
+
+		Recipients rec = new Recipients();
+		//filtered list of visible recipients (all - hidden)
+		rec.recipients = new ArrayList<>(allRecipients);
+		rec.recipients.removeAll(hiddenRecipients);
 		
-		//list of invisible recipients (all - visible)
-		rec.hiddenRecipients = new HashSet<>(allRecipients);
+		//list of invisible recipients
+		rec.hiddenRecipients = new ArrayList<>(hiddenRecipients);
 		rec.hiddenRecipients.removeAll(rec.recipients);
 		
 		//list of spies (spies - all - player)
-		rec.spies = new HashSet<>(repo.getSpies());
+		rec.spies = new ArrayList<>(repo.getSpies());
 		rec.spies.removeAll(allRecipients);
 		rec.spies.remove(player);
-		
+
+		player.sendMessage(String.format("visible: %d, Invisible: %d, spies: %d, spies online: %d",
+				rec.recipients.size(), rec.hiddenRecipients.size(), rec.spies.size(), repo.getSpies().size()));
+		player.sendMessage("muted:");
+		for(Player p : repo.getMutedPlayersForRange(key)){
+			player.sendMessage(p.getDisplayName());
+		}
+		player.sendMessage("spies:");
+		for(Player p : repo.getSpies()){
+			player.sendMessage(p.getDisplayName());
+		}
+
 		return rec;
 	}
 

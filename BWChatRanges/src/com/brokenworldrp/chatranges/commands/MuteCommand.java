@@ -14,11 +14,13 @@ public class MuteCommand  implements CommandExecutor{
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		sender.sendMessage("executing with: " + args.length + "");
 		if(!(sender instanceof Player))	{
 			MessageUtils.sendPlayersOnlyError(sender);
 			return true;
 		}
 		if(args.length < 1) {
+			sender.sendMessage(args.length + "");
 			return false;
 		}
 		RangeRepository repo = RangeRepository.getRangeRepository();
@@ -27,10 +29,18 @@ public class MuteCommand  implements CommandExecutor{
 		
 		Optional<ChatRange> range = repo.getChatRangeByKey(args[0]);
 		if(!range.isPresent()){
-			MessageUtils.sendRangeNotFoundError(player);
-			return false;
+			MessageUtils.sendMutingUnknownRangeError(player);
+			return true;
 		}
-		repo.toggleMuteRangeForPlayer(player, range.get().getKey());
+		String key = range.get().getKey();
+		if(repo.getMuteStatusForPlayer(player, key)){
+			repo.unmuteRangeForPlayer(player, key);
+			MessageUtils.sendRangeMutedMessage(player, range.get());
+		}
+		else{
+			repo.muteRangeForPlayer(player, key);
+			MessageUtils.sendRangeUnmutedMessage(player, range.get());
+		}
 		return true;
 	}
 }

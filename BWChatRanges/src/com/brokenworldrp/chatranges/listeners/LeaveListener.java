@@ -7,13 +7,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
-public class JoinListener implements Listener {
+public class LeaveListener implements Listener {
     @EventHandler
-    public void playerJoin(PlayerJoinEvent event) {
+    public void playerLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         RangeRepository repo = RangeRepository.getRangeRepository();
-        ChatRange playerRange = repo.playerSetup(player);
-        MessageUtils.sendRangeJoinMessage(player, playerRange);
+        repo.playerCleanup(player);
     }
 }

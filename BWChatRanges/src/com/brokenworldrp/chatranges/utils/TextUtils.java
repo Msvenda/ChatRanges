@@ -198,10 +198,11 @@ public class TextUtils {
 		BaseComponent listText = new TextComponent("Available ranges: \n");
 		listText.setColor(baseColor);
 		for(Range r : repo.getChatRangeList()) {
-			if(player.hasPermission(r.getWritePermission())){
+			if(r.getWritePermission().isEmpty() || player.hasPermission(r.getWritePermission())){
+				BaseComponent rangeComponent = repo.getRangePrefixComponent(r);
 				BaseComponent e = r.isCrossDimensional()
-						? new TextComponent(prefix, repo.getRangeTextComponent(r), crossDimension, NEW_LINE)
-						: new TextComponent(prefix, repo.getRangeTextComponent(r), NEW_LINE);
+						? new TextComponent(prefix, rangeComponent, crossDimension, NEW_LINE)
+						: new TextComponent(prefix, rangeComponent, NEW_LINE);
 				listText = new TextComponent(listText, e);
 			}
 		}

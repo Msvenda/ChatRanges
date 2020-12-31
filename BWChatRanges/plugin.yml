@@ -15,6 +15,8 @@ commands:
     description: 'Toggles spy mode to read messages that wouldn''t be readable otherwise.'
     aliases: ['rangespy', 'rs', 's']
     usage: '/<command> [on/off] - Checks or sets your spy status.'
+    permission: 'chatrange.command.spy'
+
   mute:
     description: 'Mutes or unmutes a range.'
     aliases: ['rangemute', 'channelmute']

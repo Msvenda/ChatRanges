@@ -1,7 +1,10 @@
 package com.brokenworldrp.chatranges.commands;
 
+import com.brokenworldrp.chatranges.data.Config;
 import com.brokenworldrp.chatranges.data.RangeRepository;
+import com.brokenworldrp.chatranges.utils.ChatFormatter;
 import com.brokenworldrp.chatranges.utils.MessageUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,7 +21,12 @@ public class SpyCommand implements CommandExecutor{
 		}
 		Player player = (Player) sender;
 		if (args.length == 0){
-			MessageUtils.sendPlayerSpyStatusMessage(player);
+			if(repo.getSpyStatusForPlayer(player)){
+				MessageUtils.sendSpyStatusOnMessage(player);
+			}
+			else{
+				MessageUtils.sendSpyStatusOffMessage(player);
+			}
 			return true;
 		}
 		else{
