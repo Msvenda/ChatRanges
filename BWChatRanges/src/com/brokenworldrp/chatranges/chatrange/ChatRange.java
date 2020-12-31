@@ -108,16 +108,16 @@ public class ChatRange implements Range{
 		rec.spies.removeAll(allRecipients);
 		rec.spies.remove(player);
 
-		player.sendMessage(String.format("visible: %d, Invisible: %d, spies: %d, spies online: %d",
-				rec.recipients.size(), rec.hiddenRecipients.size(), rec.spies.size(), repo.getSpies().size()));
-		player.sendMessage("muted:");
-		for(Player p : repo.getMutedPlayersForRange(key)){
-			player.sendMessage(p.getDisplayName());
-		}
-		player.sendMessage("spies:");
-		for(Player p : repo.getSpies()){
-			player.sendMessage(p.getDisplayName());
-		}
+//		player.sendMessage(String.format("visible: %d, Invisible: %d, spies: %d, spies online: %d",
+//				rec.recipients.size(), rec.hiddenRecipients.size(), rec.spies.size(), repo.getSpies().size()));
+//		player.sendMessage("muted:");
+//		for(Player p : repo.getMutedPlayersForRange(key)){
+//			player.sendMessage(p.getDisplayName());
+//		}
+//		player.sendMessage("spies:");
+//		for(Player p : repo.getSpies()){
+//			player.sendMessage(p.getDisplayName());
+//		}
 
 		return rec;
 	}

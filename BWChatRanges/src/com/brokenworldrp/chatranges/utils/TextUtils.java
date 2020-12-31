@@ -42,7 +42,9 @@ public class TextUtils {
 		hoverText = new TextComponent(hoverText, new TextComponent("Click to change to this range.\nShift-click to pre-type \"" + clickCommand + "\""));
 		
 		
-		
+
+		//LoggingUtil.logInfo(range.getPrefix() + " | " + range.getName());
+
 		//create prefix component
 		BaseComponent messageText = new TextComponent(range.getPrefix());
 		messageText.setColor(range.getColor());
@@ -51,6 +53,7 @@ public class TextUtils {
 		messageText.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, clickCommand));
 		
 		repo.addRangePrefixComponent(range.getKey(), messageText);
+		//LoggingUtil.logInfo(messageText.toLegacyText());
 		//create range text component
 		messageText = new TextComponent(range.getName());
 		messageText.setColor(range.getColor());
@@ -58,6 +61,7 @@ public class TextUtils {
 		messageText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {hoverText}));
 		messageText.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, clickCommand));
 		repo.addRangeTextComponent(range.getKey(), messageText);
+		//LoggingUtil.logInfo(messageText.toLegacyText());
 		return true;
 	}
 
@@ -199,7 +203,7 @@ public class TextUtils {
 		listText.setColor(baseColor);
 		for(Range r : repo.getChatRangeList()) {
 			if(r.getWritePermission().isEmpty() || player.hasPermission(r.getWritePermission())){
-				BaseComponent rangeComponent = repo.getRangePrefixComponent(r);
+				BaseComponent rangeComponent = repo.getRangeTextComponent(r);
 				BaseComponent e = r.isCrossDimensional()
 						? new TextComponent(prefix, rangeComponent, crossDimension, NEW_LINE)
 						: new TextComponent(prefix, rangeComponent, NEW_LINE);

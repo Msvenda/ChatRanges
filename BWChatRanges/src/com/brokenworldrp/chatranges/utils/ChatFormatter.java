@@ -96,12 +96,20 @@ public class ChatFormatter {
 		BaseComponent formattedMessage = new TextComponent("");
 
 		for(String component : format.split(DELIMITER_REGEX)) {
-			if(component.equals(PREFIX_PLACEHOLDER) || component.equals(RANGE_PLACEHOLDER)) {
+			if(component.equals(PREFIX_PLACEHOLDER)) {
 				if (range == null) {
-					LoggingUtil.logWarning(String.format("This message does not support the {prefix} and {range} placeholder, please edit your config! (%s)", format));
+					LoggingUtil.logWarning(String.format("This message does not support the {prefix} placeholder, please edit your config! (%s)", format));
 				}
 				else{
 					formattedMessage = new TextComponent(formattedMessage, repo.getRangePrefixComponent(range));
+				}
+			}
+			else if(component.equals(RANGE_PLACEHOLDER)){
+				if (range == null) {
+					LoggingUtil.logWarning(String.format("This message does not support the {range} placeholder, please edit your config! (%s)", format));
+				}
+				else{
+					formattedMessage = new TextComponent(formattedMessage, repo.getRangeTextComponent(range));
 				}
 			}
 			else if(component.equals(PLAYER_PLACEHOLDER)) {

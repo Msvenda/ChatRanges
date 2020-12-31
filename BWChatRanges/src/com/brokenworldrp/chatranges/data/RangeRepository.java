@@ -28,6 +28,7 @@ public class RangeRepository {
     private Map<UUID, String> playerRanges;
     private Map<String, Set<UUID>> mutedRanges;
     private Map<String, BaseComponent> rangePrefixComponents;
+    private Map<String, BaseComponent> rangeTextComponents;
     private Set<UUID> spies;
 
     public static RangeRepository getRangeRepository(){
@@ -43,6 +44,7 @@ public class RangeRepository {
         mutedRanges = new HashMap<>();
         spies = new HashSet<>();
         rangePrefixComponents = new HashMap<>();
+        rangeTextComponents = new HashMap<>();
         loadRepositoryData();
     }
 
@@ -200,7 +202,7 @@ public class RangeRepository {
     }
 
     public void addRangeTextComponent(String key, BaseComponent messageText) {
-        rangePrefixComponents.put(key, messageText);
+        rangeTextComponents.put(key, messageText);
     }
 
     public BaseComponent getRangePrefixComponent(Range range) {
@@ -214,6 +216,18 @@ public class RangeRepository {
             return rangePrefixComponents.get(range.getKey());
         }
     }
+    public BaseComponent getRangeTextComponent(Range range) {
+        if(range instanceof  EmoteRange){
+            ChatRange r = ((EmoteRange)range).getEmoteRange();
+            initializeComponent(r);
+            return rangeTextComponents.get(r.getKey());
+        }
+        else{
+            initializeComponent((ChatRange)range);
+            return rangeTextComponents.get(range.getKey());
+        }
+    }
+
     private void initializeComponent(ChatRange range){
         if(rangePrefixComponents.containsKey(range.getKey())){
             return;
