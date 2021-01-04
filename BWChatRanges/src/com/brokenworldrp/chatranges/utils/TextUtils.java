@@ -177,12 +177,12 @@ public class TextUtils {
 	
 	public static BaseComponent getSpyTextComponent() {
 		Config config = Config.getConfig();
-		BaseComponent spyText = new TextComponent("[spy]");
-		spyText.setColor(ChatColor.GRAY);
+		BaseComponent spyText = new TextComponent(config.getSpyTag());
+		spyText.setColor(config.getSpyColor());
 		
 		String command = "/spy toggle";
 		
-		BaseComponent hoverText = new TextComponent("You are seeing this message because you are out of range of the sender and you have Spy enabled.\n\nClick to toggle spy status.");
+		BaseComponent hoverText = new TextComponent(config.getSpyInfoMessage() + "\n\nClick to toggle spy status.");
 		hoverText.setColor(config.getListKeyColor());
 		
 		spyText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {hoverText}));
@@ -199,7 +199,7 @@ public class TextUtils {
 		prefix.setColor(baseColor);
 		BaseComponent crossDimension = new TextComponent(" *");
 		crossDimension.setColor(baseColor);
-		BaseComponent listText = new TextComponent("Available ranges: \n");
+		BaseComponent listText = new TextComponent(config.getRangesCommandPrefix() + "\n");
 		listText.setColor(baseColor);
 		for(Range r : repo.getChatRangeList()) {
 			if(r.getWritePermission().isEmpty() || player.hasPermission(r.getWritePermission())){

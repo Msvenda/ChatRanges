@@ -9,10 +9,10 @@ import org.bukkit.entity.Player;
 
 public class RunnableMessageContainer implements Runnable{
 
-    Player player;
-    String message;
-    Range range;
-    Recipients recipients;
+    private final Player player;
+    private final String message;
+    private final Range range;
+    private final Recipients recipients;
 
     public RunnableMessageContainer(Player player, String message, Range range, Recipients recipients){
         this.player = player;

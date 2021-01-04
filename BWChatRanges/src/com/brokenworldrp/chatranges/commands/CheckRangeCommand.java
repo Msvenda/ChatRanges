@@ -16,7 +16,12 @@ public class CheckRangeCommand implements CommandExecutor{
 			return true;
 		}
 		Player player = (Player) sender;
-		MessageUtils.sendRangeList(player);
+		try{
+			MessageUtils.sendRangeList(player);
+		} catch(Exception e){
+			MessageUtils.sendRetievingRangesError(player);
+		}
+
 		return true;
 	}
 

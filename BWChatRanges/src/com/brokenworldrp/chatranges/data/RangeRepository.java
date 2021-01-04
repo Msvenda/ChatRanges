@@ -23,13 +23,13 @@ public class RangeRepository {
     private static RangeRepository singleton;
 
     private String defaultKey;
-    private Map<String, EmoteRange> emoteRanges;
-    private Map<String, ChatRange> chatRanges;
+    private final Map<String, EmoteRange> emoteRanges;
+    private final Map<String, ChatRange> chatRanges;
     private Map<UUID, String> playerRanges;
-    private Map<String, Set<UUID>> mutedRanges;
-    private Map<String, BaseComponent> rangePrefixComponents;
-    private Map<String, BaseComponent> rangeTextComponents;
-    private Set<UUID> spies;
+    private final Map<String, Set<UUID>> mutedRanges;
+    private final Map<String, BaseComponent> rangePrefixComponents;
+    private final Map<String, BaseComponent> rangeTextComponents;
+    private final Set<UUID> spies;
 
     public static RangeRepository getRangeRepository(){
         if(singleton == null){
@@ -41,6 +41,7 @@ public class RangeRepository {
     private RangeRepository(){
         emoteRanges = new HashMap<>();
         chatRanges = new HashMap<>();
+        playerRanges = new HashMap<>();
         mutedRanges = new HashMap<>();
         spies = new HashSet<>();
         rangePrefixComponents = new HashMap<>();
@@ -73,37 +74,6 @@ public class RangeRepository {
         for(String key : data.getKeys(false)){
             playerRanges.put(UUID.fromString(key), data.getString(key));
         }
-    }
-
-    public Boolean createRangeComponents(Range range) {
-        if(rangePrefixComponents.containsKey(range.getKey())) {
-            return false;
-        }
-
-        //create shared hover text
-        String clickCommand = String.format("/%s ", range.getCommand());
-        BaseComponent hoverText = new TextComponent(TextUtils.simpleKeyValueComponent("Name:", range.getName()));
-        hoverText.addExtra(TextUtils.simpleKeyValueComponent("Range:", String.format("%.1f blocks", range.getRange())));
-        hoverText.addExtra(TextUtils.simpleKeyValueComponent("Cross-Dimensional", range.isCrossDimensional() ?
-                "\u2713" : "\u2717"));
-        hoverText.addExtra(TextUtils.simpleKeyValueComponent("Command:", clickCommand));
-        for(String alias : range.getAliases()) {
-            hoverText.addExtra(TextUtils.simpleListComponent(alias));
-        }
-        hoverText.addExtra(TextUtils.simpleKeyValueComponent("Prefix:", range.getPrefix()));
-        hoverText.addExtra(TextUtils.simpleKeyValueComponent("Colour:", range.getColor().getName()));
-        hoverText.addExtra(new TextComponent("\n"));
-        hoverText.addExtra(new TextComponent("Click to change to this range.\nShift-click to pre-type \"" + clickCommand + "\""));
-
-        //create prefix component
-        BaseComponent messageText = new TextComponent(range.getPrefix());
-        messageText.setColor(range.getColor());
-
-        messageText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {hoverText}));
-        messageText.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, clickCommand));
-
-        rangePrefixComponents.put(range.getKey(), messageText);
-        return true;
     }
 
     public boolean setDefaultRangeKey(String key){
@@ -144,7 +114,7 @@ public class RangeRepository {
         return Optional.ofNullable(emoteRanges.get(rangeKey));
     }
 
-    public boolean setPlayerRangebyKey(UUID playerID, String rangeKey) {
+    public boolean setPlayerRangeByKey(UUID playerID, String rangeKey) {
         if(chatRanges.containsKey(rangeKey)) {
             playerRanges.put(playerID, rangeKey);
             return true;
@@ -240,10 +210,10 @@ public class RangeRepository {
     public ChatRange playerSetup(Player player) {
         UUID id = player.getUniqueId();
         if(!playerRanges.containsKey(id)){
-            setPlayerRangebyKey(id, defaultKey);
+            setPlayerRangeByKey(id, defaultKey);
         }
         else if(!chatRanges.containsKey(playerRanges.get(id))){
-            setPlayerRangebyKey(id, defaultKey);
+            setPlayerRangeByKey(id, defaultKey);
         }
         return chatRanges.get(playerRanges.get(id));
     }

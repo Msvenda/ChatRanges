@@ -10,9 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ChatRange implements Range{
@@ -53,7 +51,7 @@ public class ChatRange implements Range{
 
 		List<Player> allRecipients;
 		//get players with permission in range
-		if(rangeRadius <= 0) {
+		if(rangeRadius <= 0 || crossDimension) {
 			if(crossDimension){
 				allRecipients = Bukkit.getOnlinePlayers().stream()
 						.filter(pl -> !pl.equals(player))
@@ -109,17 +107,6 @@ public class ChatRange implements Range{
 		rec.spies = new ArrayList<>(repo.getSpies());
 		rec.spies.removeAll(allRecipients);
 		rec.spies.remove(player);
-
-//		player.sendMessage(String.format("visible: %d, Invisible: %d, spies: %d, spies online: %d",
-//				rec.recipients.size(), rec.hiddenRecipients.size(), rec.spies.size(), repo.getSpies().size()));
-//		player.sendMessage("muted:");
-//		for(Player p : repo.getMutedPlayersForRange(key)){
-//			player.sendMessage(p.getDisplayName());
-//		}
-//		player.sendMessage("spies:");
-//		for(Player p : repo.getSpies()){
-//			player.sendMessage(p.getDisplayName());
-//		}
 
 		return rec;
 	}

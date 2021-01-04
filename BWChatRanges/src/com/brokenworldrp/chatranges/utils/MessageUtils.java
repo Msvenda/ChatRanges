@@ -2,13 +2,10 @@ package com.brokenworldrp.chatranges.utils;
 
 import com.brokenworldrp.chatranges.chatrange.*;
 import com.brokenworldrp.chatranges.data.Config;
-import com.brokenworldrp.chatranges.data.RangeRepository;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.Optional;
 
 public class MessageUtils {
 	
@@ -152,7 +149,7 @@ public class MessageUtils {
 	}
 
 	public static void sendMutingUnknownRangeError(Player player) {
-		player.spigot().sendMessage(ChatFormatter.getStandardFormattedMessage(Config.getConfig().getMutingUnknownRangeError(), player, null, null, Config.getConfig().getDefaultColor()));
+		player.spigot().sendMessage(ChatFormatter.getStandardFormattedMessage(Config.getConfig().getMutingUnknownRangeError(), player, null, null, Config.getConfig().getErrorColor()));
 	}
 
 	public static void sendSpyStatusOnMessage(Player player) {
@@ -160,5 +157,17 @@ public class MessageUtils {
 	}
 	public static void sendSpyStatusOffMessage(Player player){
 		player.spigot().sendMessage(ChatFormatter.getStandardFormattedMessage(Config.getConfig().getSpyStatusOffMessage(), player, null, null, Config.getConfig().getDefaultColor()));
+	}
+
+	public static void sendRetrievingCurrentRangeError(Player player) {
+		player.spigot().sendMessage(ChatFormatter.getStandardFormattedMessage(Config.getConfig().getRetrievingCurrentRangeError(), player,  null, null, Config.getConfig().getErrorColor()));
+	}
+
+	public static void sendRetievingRangesError(Player player) {
+		player.spigot().sendMessage(ChatFormatter.getStandardFormattedMessage(Config.getConfig().getRetrievingRangesError(), player, null, null, Config.getConfig().getErrorColor()));
+	}
+
+	public static void sendMissingRangeMuteError(Player player) {
+		player.spigot().sendMessage(ChatFormatter.getStandardFormattedMessage(Config.getConfig().getMissingRangeMuteError(), player, null, null, Config.getConfig().getErrorColor()));
 	}
 }

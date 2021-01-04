@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 public class Config {
@@ -48,18 +49,12 @@ public class Config {
     //errors
     final String ePlayersOnly;
     final String ePlayerNoPermission;
-    final String eRetrievingRange;
-    final String eSettingRange;
-    final String eRevertRange;
     final String eMissingCommandRange;
     final String eRetrievingCurrentRange;
-    final String eRetrievingRetrievingRanges;
-    final String eRetrievingCommandEmote;
+    final String eRetrievingRanges;
     final String eMissingCommandEmote;
     final String eMissingMessageEmote;
     final String eMissingRangeMute;
-    final String eRetrievingSpy;
-    final String eSpyToggle;
     final String eItemParsing;
     final String eMutingUnknownRange;
 
@@ -165,6 +160,7 @@ public class Config {
 
             if(rangesSection.contains(rangeKey)) {
                 ConfigurationSection range = rangesSection.getConfigurationSection(rangeKey);
+                String k = rangeKey.toLowerCase(Locale.ROOT);
                 String name = range.getString("name", rangeKey);
                 String command = range.getString("command", rangeKey);
                 String description = range.getString("description", "Changes your chat range to {range}. [{distance}]");
@@ -189,7 +185,7 @@ public class Config {
                         ? RANGE_READ_PERM_PREFIX + range.getString("read-permission")
                         : "";
                 //create ChatRange and add to chatRangeList
-                ChatRange chatRange = new ChatRange(rangeKey, name, description,
+                ChatRange chatRange = new ChatRange(k, name, description,
                         format, command, aliases, crossDimension, distance,
                         colour, prefix, permission, readPermission);
 
@@ -206,6 +202,7 @@ public class Config {
             //load values
             if(emotesSection.contains(emoteKey)){
                 ConfigurationSection emote = emotesSection.getConfigurationSection(emoteKey);
+                String k = emoteKey.toLowerCase(Locale.ROOT);
                 String name = emote.getString("name", emoteKey);
                 String command = emote.getString("command", emoteKey);
                 String description = emote.getString("description", "");
@@ -227,7 +224,7 @@ public class Config {
                         : "";
 
                 if(range.isPresent()){
-                    EmoteRange emoteRange = new EmoteRange(emoteKey, name, description,
+                    EmoteRange emoteRange = new EmoteRange(k, name, description,
                             format, command, aliases, range.get(), colour, prefix, permission);
                     repo.addEmoteRange(emoteRange);
 
@@ -267,18 +264,12 @@ public class Config {
         //load error types
         ePlayersOnly = messagingSection.getString("error-players-only",  "Sorry, this command can only be used by players.");
         ePlayerNoPermission = messagingSection.getString("error-player-no-permission",  "Sorry, you do not have the permissions to run this command.");
-        eRetrievingRange = messagingSection.getString("error-retrieving-command-range",  "Sorry, an unexpected error has occurred while trying to retrieve information about this command.");
-        eSettingRange = messagingSection.getString("error-setting-range",  "Sorry, an unexpected error has occurred while trying to set your range.");
-        eRevertRange = messagingSection.getString("error-revert-range",  "Sorry, an unexpected error has occurred while trying to revert your range.");
         eMissingCommandRange = messagingSection.getString("error-missing-command-range",  "Sorry, we are unable to find the range for this command.");
         eRetrievingCurrentRange = messagingSection.getString("error-retrieving-current-range",  "Sorry, an unexpected error has occurred while trying to retrieve your current range.");
-        eRetrievingRetrievingRanges = messagingSection.getString("error-retrieving-ranges",  "Sorry, an unexpected error has occurred while trying to retrieve all of the available ranges.");
-        eRetrievingCommandEmote = messagingSection.getString("error-retrieving-command-emote",  "Sorry, an unexpected error has occurred while trying to retrieve information about this command.");
+        eRetrievingRanges = messagingSection.getString("error-retrieving-ranges",  "Sorry, an unexpected error has occurred while trying to retrieve all of the available ranges.");
         eMissingCommandEmote = messagingSection.getString("error-missing-command-emote",  "Sorry, we are unable to find the emote for this command.");
         eMissingMessageEmote = messagingSection.getString("error-missing-message-emote",  "Please include a message for your emote.");
         eMissingRangeMute = messagingSection.getString("error-missing-range-mute",  "Please provide the channel you want to mute or unmute.");
-        eRetrievingSpy = messagingSection.getString("error-retrieving-spy",  "Sorry, an unexpected error has occurred while trying to retrieve your spy status.");
-        eSpyToggle = messagingSection.getString("error-spy-toggle",  "Sorry, an unexpected error has occurred while trying to toggle your spy mode.");
         eItemParsing = messagingSection.getString("error-item-parsing",  "Sorry, an unexpected error has occurred while trying to format the item.");
         eMutingUnknownRange = messagingSection.getString("error-mute-unknown-range",  "Sorry, I am unable to find the range '{range}'.");
 
@@ -291,14 +282,17 @@ public class Config {
     }
 
     //format
-//    public String getMessageFormat() {
-//        return messageFormat;
-//    }
-//    public String getEmoteFormat() {
-//        return emoteFormat;
-//    }
+    public String getMessageFormat() {
+        return messageFormat;
+    }
+    public String getEmoteFormat() {
+        return emoteFormat;
+    }
     public String getSpyPosition() {
         return spyPosition;
+    }
+    public String getRangesCommandPrefix(){
+        return rangesCommandPrefix;
     }
 
     //info messages
@@ -329,8 +323,8 @@ public class Config {
     public String getRangeUnmutedMessage() {
         return mMuteOff;
     }
-    public String getMutingUnknownRangeError() {
-        return eMutingUnknownRange;
+    public String getSpyInfoMessage(){
+        return mSpyInfo;
     }
 
     //error messages
@@ -351,6 +345,15 @@ public class Config {
     }
     public String getItemParsingError(){
         return eItemParsing;
+    }
+    public String getRetrievingCurrentRangeError() {
+        return eRetrievingCurrentRange;
+    }
+    public String getRetrievingRangesError() {
+        return eRetrievingRanges;
+    }
+    public String getMutingUnknownRangeError() {
+        return eMutingUnknownRange;
     }
 
     //colours
@@ -387,6 +390,15 @@ public class Config {
         return recipientNumberLogging;
     }
 
+    public ChatColor getSpyColor() {
+        return spyColor;
+    }
 
+    public String getSpyTag() {
+        return spyTag;
+    }
 
+    public String getMissingRangeMuteError() {
+        return eMissingRangeMute;
+    }
 }

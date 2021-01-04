@@ -8,6 +8,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Locale;
 import java.util.Optional;
 
 public class MuteCommand  implements CommandExecutor{
@@ -18,14 +19,13 @@ public class MuteCommand  implements CommandExecutor{
 			MessageUtils.sendPlayersOnlyError(sender);
 			return true;
 		}
+		Player player = (Player) sender;
 		if(args.length < 1) {
-			return false;
+			MessageUtils.sendMissingRangeMuteError(player);
 		}
 		RangeRepository repo = RangeRepository.getRangeRepository();
 
-		Player player = (Player) sender;
-		
-		Optional<ChatRange> range = repo.getChatRangeByKey(args[0]);
+		Optional<ChatRange> range = repo.getChatRangeByKey(args[0].toLowerCase(Locale.ROOT));
 		if(!range.isPresent()){
 			MessageUtils.sendMutingUnknownRangeError(player);
 			return true;

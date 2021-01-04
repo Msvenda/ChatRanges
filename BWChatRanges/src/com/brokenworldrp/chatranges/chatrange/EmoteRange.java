@@ -44,7 +44,7 @@ public class EmoteRange implements Range {
 
 	@Override
 	public String getFormat() {
-		return null;
+		return emoteFormat;
 	}
 
 	@Override

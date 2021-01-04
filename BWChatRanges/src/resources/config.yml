@@ -3,46 +3,55 @@
 #
 
 # ========================================
+# Contains default formatting for messages and emotes, as well as some command prefixes
+# ........................................
+# Message and emote contain the default formatting for messages and emotes
+# The following placeholders are accepted:
+#       - {prefix}          - Range prefix
+#       - {range}           - Range name
+#       - {player}          - The player that sent the message
+#       - {message}         - The message contents
+# ========================================
+formatting:
+  message: '{prefix} {player}: {message}'
+  emote: '* {prefix} {player} {message}'
+  command:
+    ranges:
+      message-prefix: 'Available Ranges:'
+    spy:
+      tag: '[Spy]'
+      colour: 'Gray'
+      # 'prefix' (default) or 'suffix'
+      position: 'prefix'
+
+# ========================================
 # ranges - Add your own custom range to the list. Use the following template:
 # ........................................
 # ranges:
-#   <name of range>: Name of the range, this would only be used within this config
+#   <name of range>: The range key, this is used throughout config (default range, ) and in game (ex. mute command) to reference the range .
 #     name: Name of the range to be displayed
 #     description: Description to be shown for the command
-#                  Placeholders accepted:
-#                    - {range}           - Range name
-#                    - {distance}        - Distance of this range
-#                    - {permission}      - Permission required to use this command
-#                    - {read-permission} - Permission required to see messages sent in this range
 #     command: Command to switch to this range, whitespace characters not allowed
 #     aliases: Different command names that can be used to trigger the command
-#     cross-dimension: If this range work across dimensions/worlds
-#     distance: Distance of how far can this chat range can reach, decimals allowed
+#     distance: Distance of how far can this chat range can reach, decimals allowed.
+#                 Leave blank or use negative values for infinite distance.
+#     cross-dimension: If this range will work across dimensions/worlds.
 #     colour: Colour of the chat in this range
+#     format: Format of messages in this range, optional
+#                 Leave blank to use default message format
 #     prefix: Prefix to be appended before the chat, usually used to denote the range
 #     permission: Permission required to run this command, blank if not required
 #                 This will be appended after 'chatrange.range.'
 #                 Leave blank to ignore.
 #     read-permission: Permission required to see messages sent in this range
-#                      This will be appended after 'chatrange.read.'
-#                      Leave blank to ignore.
-#     language: Options regarding languages here. Leave blank to ignore.
-#       permission: Permission required to see this message without any alteration.
-#                   Leave blank to not use language feature.
-#       dictionary: File name of the CSV file which holds the words to translate to
-#                   File should be placed in a folder named "language" in the folder which this config is in
-#                   First column should hold the original word to look for
-#                   Subsequent columns would be the words should be replaced with
-#                   If there are no words to be replaced with, the word would be removed
-#       # Options for when words are not found in the dictionary
-#       randomise-message: Randomises the word arrangement
-#       collapse-repeating-characters: Reduces repeating characters to a single character
+#                 This will be appended after 'chatrange.read.'
+#                 Leave blank to ignore.
 # ========================================
 ranges:
   local:
     name: 'Local'
     command: 'local'
-    description: 'Changes your chat range to {range}. [{distance}]'
+    description: 'Changes your chat range to Local. [20]'
     aliases:
       - 'l'
     cross-dimension: false
@@ -52,7 +61,7 @@ ranges:
   admin:
     name: 'Admin'
     command: 'admin'
-    description: 'Changes your chat range to {range}. Only players with the permission ''{read-permission}'' are able to read messages sent here. [{distance}]'
+    description: 'Changes your chat range to Admin.'
     aliases:
       - 'ad'
     cross-dimension: true
@@ -63,12 +72,24 @@ ranges:
   global:
     name: 'Global'
     command: 'global'
-    description: 'Changes your chat range to {range}. [{distance}]'
+    description: 'Changes your chat range to global.'
     aliases:
       - 'g'
     cross-dimension: true
     colour: 'Aqua'
     prefix: '[Global]'
+  event:
+    name: 'Event'
+    command: 'event'
+    description: 'Changes your chat range to Event.'
+    aliases:
+      - 'ev'
+    cross-dimension: false
+    colour: 'Green'
+    prefix: '[Event]'
+    permission: 'event'
+    format: '{prefix} {message}'
+
 # ========================================
 # emotes - Add your own custom emote to the list. Use the following template:
 # ........................................
@@ -76,21 +97,18 @@ ranges:
 #   <name of emotes>: Name of the emote, this would only be used within this config
 #     name: Name of the range to be displayed
 #     description: Description to be shown for the command
-#                  Placeholders accepted:
-#                    - {range}      - Range name this emote belongs to
-#                    - {distance}   - Distance of this emote, defined by the range
-#                    - {permission} - Permission required to use this command
-#     command: Command to use this emote, whitespace characters not allowed
-#     range: Name of range this emote belongs to, must be declared above
+#     range: Key of range this emote belongs to, must be declared above, case sensitive
 #     aliases: Different command names that can be used to trigger the command
+#     format: Format of messages in this range, optional
+#                 Leave blank to use default message format
 #     prefix: Prefix to be appended before the chat, usually to denote the emote
 #     permission: Permission required to run this command, blank if not required
 #                 This will be appended after 'chatrange.emote.'
 # ========================================
 emotes:
   local:
-    name: 'Local'
-    description: 'Sends an emote at the {range} range.'
+    name: 'local'
+    description: 'Sends an emote at the Local range.'
     command: 'mel'
     range: 'local'
     aliases:
@@ -122,6 +140,15 @@ defaults:
       key: 'Gold'
       value: 'Aqua'
 
+# ========================================
+# Contains various messages, can support placeholders. Please check plugin wiki for per message placeholder support.
+# ........................................
+# Possible placeholderes:
+#       - {prefix}          - Relevant range prefix
+#       - {range}           - Relevant range anme
+#       - {player}          - The player who this is sent to
+#       - {message}         - Relevant message
+# ========================================
 messages:
   message-changed-range: 'Your range has been set to {range}.'
   message-join-range: 'Your range is currently set to {range}.'
@@ -136,29 +163,11 @@ messages:
 
   error-players-only: 'Sorry, this command can only be used by players.'
   error-player-no-permission: 'Sorry, you do not have the permissions to run this command.'
-  error-retrieving-command-range: 'Sorry, an unexpected error has occurred while trying to retrieve information about this command.'
-  error-setting-range: 'Sorry, an unexpected error has occurred while trying to set your range.'
-  error-revert-range: 'Sorry, an unexpected error has occurred while trying to revert your range.'
   error-missing-command-range: 'Sorry, we are unable to find the range for this command.'
   error-retrieving-current-range: 'Sorry, an unexpected error has occurred while trying to retrieve your current range.'
   error-retrieving-ranges: 'Sorry, an unexpected error has occurred while trying to retrieve all of the available ranges.'
-  error-retrieving-command-emote: 'Sorry, an unexpected error has occurred while trying to retrieve information about this command.'
   error-missing-command-emote: 'Sorry, we are unable to find the emote for this command.'
   error-missing-message-emote: 'Please include a message for your emote.'
   error-missing-range-mute: 'Please provide the channel you want to mute or unmute.'
-  error-retrieving-spy: 'Sorry, an unexpected error has occurred while trying to retrieve your spy status.'
-  error-spy-toggle: 'Sorry, an unexpected error has occurred while trying to toggle your spy mode.'
   error-item-parsing: 'Sorry, an unexpected error has occurred while trying to format the item.'
   error-mute-unknown-range: 'Sorry, I am unable to find the range ''{range}''.'
-
-formatting:
-  message: '{prefix} {player}: {message}'
-  emote: '* {prefix} {player} {message}'
-  command:
-    ranges:
-      message-prefix: 'Available Ranges:'
-    spy:
-      tag: '[Spy]'
-      colour: 'Gray'
-      # 'prefix' (default) or 'suffix'
-      position: 'prefix'

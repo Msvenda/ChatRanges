@@ -69,7 +69,7 @@ public class ChangeRangeCommand extends BukkitCommand{
 
 		//send range chaged message
 		MessageUtils.sendRangeChangedMessage(player, range.get());
-		if(!repo.setPlayerRangebyKey(player.getUniqueId(), rangeKey)){
+		if(!repo.setPlayerRangeByKey(player.getUniqueId(), rangeKey)){
 			MessageUtils.sendMissingCommandRangeError(player);
 		}
 		return true;

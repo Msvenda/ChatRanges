@@ -8,8 +8,6 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 
-import java.util.Optional;
-
 public class ChatFormatter {
 	public static final String PREFIX_PLACEHOLDER = "prefix";
 	public static final String PLAYER_PLACEHOLDER = "player";
@@ -57,10 +55,10 @@ public class ChatFormatter {
 		Config config = Config.getConfig();
 		BaseComponent spyMessage = TextUtils.getSpyTextComponent();
 		if(config.getSpyPosition().equals("prefix")) {
-			return new TextComponent(spyMessage, new TextComponent(""), formattedMessage);
+			return new TextComponent(spyMessage, formattedMessage);
 		}
 		else {
-			return new TextComponent(formattedMessage, new TextComponent(""), spyMessage);
+			return new TextComponent(formattedMessage, spyMessage);
 		}		
 	}
 	
@@ -94,7 +92,6 @@ public class ChatFormatter {
 		//"<prefix>" component has range info on hover, set range on click, pre-type on shift-click
 		//"<player>" component has player info on hover, click to pre-type msg
 		//"<message>" component has @hand and @offhand option, shows item data on hover
-		Config config = Config.getConfig();
 		RangeRepository repo = RangeRepository.getRangeRepository();
 
 		BaseComponent formattedMessage = new TextComponent("");
@@ -139,67 +136,4 @@ public class ChatFormatter {
 
 		return formattedMessage;
 	}
-
-//	public static BaseComponent getNoRecipientMessage(Player player, String message, Range range) {
-//		Config config = Config.getConfig();
-//		RangeRepository repo = RangeRepository.getRangeRepository();
-//		BaseComponent formattedMessage = new TextComponent();
-//
-//		for(String component : config.getNoRecipientMessage().split(DELIMITER_REGEX)) {
-//			if(component.equals(RANGE_PLACEHOLDER)) {
-//				formattedMessage = new TextComponent(formattedMessage,repo.getRangePrefixComponent(range));
-//			}
-//			else if(component.equals(PLAYER_PLACEHOLDER)) {
-//				formattedMessage = new TextComponent(formattedMessage,TextUtils.getNameTextComponent(player));
-//			}
-//			else if(component.equals(MESSAGE_PLACEHOLDER)) {
-//				formattedMessage = new TextComponent(formattedMessage,TextUtils.getMessageTextComponents(message, player, range));
-//			}
-//			else {
-//				formattedMessage = new TextComponent(formattedMessage,TextUtils.formatText(component, ChatColor.GRAY));
-//			}
-//		}
-//
-//		return formattedMessage;
-//	}
-//
-//	public static BaseComponent getRangeChangedMessage(Player player, ChatRange range) {
-//		Config config = Config.getConfig();
-//		RangeRepository repo = RangeRepository.getRangeRepository();
-//
-//		BaseComponent formattedMessage = new TextComponent();
-//
-//		for(String component : config.getChangedRangeMessage().split(DELIMITER_REGEX)){
-//			if(component.equals(RANGE_PLACEHOLDER)) {
-//				formattedMessage = new TextComponent(formattedMessage,repo.getRangePrefixComponent(range));
-//			}
-//			else if(component.equals(PLAYER_PLACEHOLDER)) {
-//				formattedMessage = new TextComponent(formattedMessage,TextUtils.getNameTextComponent(player));
-//			}
-//			else {
-//				formattedMessage = new TextComponent(formattedMessage,TextUtils.formatText(component, config.getDefaultColor()));
-//			}
-//		}
-//		return formattedMessage;
-//	}
-//
-//	public static BaseComponent getRangeJoinMessage(Player player, ChatRange range) {
-//		Config config = Config.getConfig();
-//		RangeRepository repo = RangeRepository.getRangeRepository();
-//
-//		BaseComponent formattedMessage = new TextComponent();
-//
-//		for(String component : config.getJoinRangeMessage().split(DELIMITER_REGEX)){
-//			if(component.equals(RANGE_PLACEHOLDER)) {
-//				formattedMessage = new TextComponent(formattedMessage,repo.getRangePrefixComponent(range));
-//			}
-//			else if(component.equals(PLAYER_PLACEHOLDER)) {
-//				formattedMessage = new TextComponent(formattedMessage,TextUtils.getNameTextComponent(player));
-//			}
-//			else {
-//				formattedMessage = new TextComponent(formattedMessage,TextUtils.formatText(component, config.getDefaultColor()));
-//			}
-//		}
-//		return formattedMessage;
-//	}
 }

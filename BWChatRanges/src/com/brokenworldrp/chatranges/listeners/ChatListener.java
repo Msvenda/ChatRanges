@@ -21,6 +21,12 @@ public class ChatListener implements Listener{
 		Player sender = event.getPlayer();
 		RangeRepository repo = RangeRepository.getRangeRepository();
 		Optional<ChatRange> chatRange = repo.getPlayerChatRange(sender.getUniqueId());
+		if(chatRange.isPresent()){
+
+		}
+		else{
+			MessageUtils.sendRetrievingCurrentRangeError(sender);
+		}
 		chatRange.ifPresent(range -> {
 			//unmute range
 			if(repo.getMuteStatusForPlayer(sender, range.getKey())){
