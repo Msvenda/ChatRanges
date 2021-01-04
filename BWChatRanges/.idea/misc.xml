@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="EntryPointsManager">
+    <pattern value="com.brokenworldrp.chatranges.commands.ChangeRangeCommand" />
+    <pattern value="com.brokenworldrp.chatranges.commands.ChangeRangeCommand" method="ChangeRangeCommand" />
+    <pattern value="com.brokenworldrp.chatranges.listeners.ChatListener" />
+    <pattern value="com.brokenworldrp.chatranges.listeners.ChatListener" method="playerChat" />
+    <pattern value="com.brokenworldrp.chatranges.ChatRangesMain" />
+    <pattern value="com.brokenworldrp.chatranges.commands.CheckRangeCommand" />
+    <pattern value="com.brokenworldrp.chatranges.commands.EmoteCommand" />
+    <pattern value="com.brokenworldrp.chatranges.commands.EmoteCommand" method="EmoteCommand" />
+    <pattern value="com.brokenworldrp.chatranges.listeners.JoinListener" />
+    <pattern value="com.brokenworldrp.chatranges.listeners.JoinListener" method="playerJoin" />
+    <pattern value="com.brokenworldrp.chatranges.listeners.LeaveListener" />
+    <pattern value="com.brokenworldrp.chatranges.listeners.LeaveListener" method="playerLeave" />
+    <pattern value="com.brokenworldrp.chatranges.commands.MuteCommand" />
+    <pattern value="com.brokenworldrp.chatranges.commands.SpyCommand" />
+  </component>
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="11" project-jdk-type="JavaSDK" />
+</project>

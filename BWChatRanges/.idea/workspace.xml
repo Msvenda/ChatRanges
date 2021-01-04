@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="BWChatRanges:jar" />
+    </artifacts-to-build>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b81e9910-036d-4e08-a342-61cd28248002" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/.." value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1mKGIXLqPBYUV7LS0h4vu9g1CwU" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/plugin.yml" />
+    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\REPOS\ChatRanges\BWChatRanges\src\resources" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b81e9910-036d-4e08-a342-61cd28248002" name="Default Changelist" comment="" />
+      <created>1609234789901</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1609234789901</updated>
+    </task>
+    <task id="LOCAL-00001" summary="-Fixed config file creation">
+      <created>1609237415906</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1609237415906</updated>
+    </task>
+    <task id="LOCAL-00002" summary="-Fixed config file creation">
+      <created>1609238344579</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1609238344579</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Fixed various config issues">
+      <created>1609356282037</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1609356282037</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Bugfix round 1&#10;&#10;- redid how players in range are gotten&#10;- fixed various mute issues&#10;- fixed various spy issues&#10;- added mute feedback&#10;- fixed ranges command not working&#10;- added permission to spy command">
+      <created>1609376715123</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1609376715123</updated>
+    </task>
+    <task id="LOCAL-00005" summary="small bugfixes&#10;&#10;- prefix and text components now work properly&#10;- removed debug text from messages">
+      <created>1609417515046</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1609417515046</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Moved RunnableMessageContainer to utils package">
+      <created>1609759532925</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1609759532925</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Added per range formatting&#10;- added format section to config&#10;- added getFormat() to Range interface&#10;- modified ChatFormatter to use range format">
+      <created>1609760930699</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1609760930699</updated>
+    </task>
+    <task id="LOCAL-00008" summary="code cleanup">
+      <created>1609767747183</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1609767747183</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="AsyncChat" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="-Fixed config file creation" />
+    <MESSAGE value="Fixed various config issues" />
+    <MESSAGE value="Bugfix round 1&#10;&#10;- redid how players in range are gotten&#10;- fixed various mute issues&#10;- fixed various spy issues&#10;- added mute feedback&#10;- fixed ranges command not working&#10;- added permission to spy command" />
+    <MESSAGE value="small bugfixes&#10;&#10;- prefix and text components now work properly&#10;- removed debug text from messages" />
+    <MESSAGE value="Moved RunnableMessageContainer to utils package" />
+    <MESSAGE value="Added per range formatting&#10;- added format section to config&#10;- added getFormat() to Range interface&#10;- modified ChatFormatter to use range format" />
+    <MESSAGE value="code cleanup" />
+    <option name="LAST_COMMIT_MESSAGE" value="code cleanup" />
+  </component>
+</project>
