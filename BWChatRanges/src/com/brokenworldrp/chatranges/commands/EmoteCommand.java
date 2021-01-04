@@ -2,7 +2,7 @@ package com.brokenworldrp.chatranges.commands;
 
 import com.brokenworldrp.chatranges.chatrange.EmoteRange;
 import com.brokenworldrp.chatranges.data.RangeRepository;
-import com.brokenworldrp.chatranges.listeners.RunnableMessageContainer;
+import com.brokenworldrp.chatranges.utils.RunnableMessageContainer;
 import com.brokenworldrp.chatranges.utils.MessageUtils;
 import com.brokenworldrp.chatranges.utils.Recipients;
 import org.apache.commons.lang.StringUtils;

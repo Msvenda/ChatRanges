@@ -1,4 +1,4 @@
-package com.brokenworldrp.chatranges.listeners;
+package com.brokenworldrp.chatranges.utils;
 
 import com.brokenworldrp.chatranges.chatrange.ChatRange;
 import com.brokenworldrp.chatranges.chatrange.EmoteRange;

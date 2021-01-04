@@ -4,6 +4,7 @@ import com.brokenworldrp.chatranges.chatrange.ChatRange;
 import com.brokenworldrp.chatranges.data.RangeRepository;
 import com.brokenworldrp.chatranges.utils.MessageUtils;
 import com.brokenworldrp.chatranges.utils.Recipients;
+import com.brokenworldrp.chatranges.utils.RunnableMessageContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
