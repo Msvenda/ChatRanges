@@ -29,4 +29,6 @@ public interface Range {
 	Recipients getPlayersInRange(Player player);
 
 	String getDescription();
+
+	String getFormat();
 }

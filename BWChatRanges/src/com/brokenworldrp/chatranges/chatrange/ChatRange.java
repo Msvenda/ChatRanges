@@ -20,6 +20,7 @@ public class ChatRange implements Range{
 	private final String rangeName;
 	private final String rangeCommand;
 	private final String rangeDescription;
+	private final String rangeFormat;
 	private final List<String> rangeAliases;
 	private final double rangeRadius;
 	private final boolean crossDimension;
@@ -28,12 +29,13 @@ public class ChatRange implements Range{
 	private final String rangeWritePermission;
 	private final String rangeReadPermission;
 
-    public ChatRange(String rangeKey, String name, String description, String command, List<String> aliases,
+    public ChatRange(String rangeKey, String name, String description, String format, String command, List<String> aliases,
 					 boolean crossDimension, Double distance, ChatColor colour, String prefix,
 					 String permission, String readPermission) {
 		this.key = rangeKey;
 		this.rangeName = name;
 		this.rangeDescription = description;
+		this.rangeFormat = format;
 		this.rangeCommand = command;
 		this.rangeAliases = aliases;
 		this.crossDimension = crossDimension;
@@ -125,6 +127,11 @@ public class ChatRange implements Range{
 	@Override
 	public String getDescription() {
 		return rangeDescription;
+	}
+
+	@Override
+	public String getFormat() {
+		return rangeFormat;
 	}
 
 	@Override

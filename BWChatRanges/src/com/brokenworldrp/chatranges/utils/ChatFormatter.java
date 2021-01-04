@@ -23,16 +23,18 @@ public class ChatFormatter {
 		//"<prefix>" component has range info on hover, set range on click, pre-type on shift-click
 		//"<player>" component has player info on hover, click to pre-type msg
 		//"<message>" component has @hand and @offhand option, shows item data on hover
-		Config config = Config.getConfig();
 		RangeRepository repo = RangeRepository.getRangeRepository();
 
 		//BaseComponent[] formattedMessage = new ComponentBuilder("").create();
 		BaseComponent formattedMessage = new TextComponent("");
 		
-		for(String component : config.getMessageFormat().split(DELIMITER_REGEX)) {
+		for(String component : range.getFormat().split(DELIMITER_REGEX)) {
 			if(component.equals(PREFIX_PLACEHOLDER)) {
 				//formattedMessage = new ComponentBuilder().append(formattedMessage).append(repo.getRangePrefixComponent(range)).create();
 				formattedMessage = new TextComponent(formattedMessage, repo.getRangePrefixComponent(range));
+			}
+			else if(component.equals(RANGE_PLACEHOLDER)){
+				formattedMessage = new TextComponent(formattedMessage, repo.getRangeTextComponent(range));
 			}
 			else if(component.equals(PLAYER_PLACEHOLDER)) {
 				//formattedMessage = new ComponentBuilder().append(formattedMessage).append(TextUtils.getNameTextComponent(player)).create();
@@ -63,14 +65,16 @@ public class ChatFormatter {
 	}
 	
 	public static BaseComponent getFormattedEmote(Player player, String message, EmoteRange range){
-		Config config = Config.getConfig();
 		RangeRepository repo = RangeRepository.getRangeRepository();
 
 		BaseComponent formattedMessage = new TextComponent();
 		
-		for(String component : config.getEmoteFormat().split(DELIMITER_REGEX)) {
+		for(String component : range.getFormat().split(DELIMITER_REGEX)) {
 			if(component.equals(PREFIX_PLACEHOLDER)) {
 				formattedMessage = new TextComponent(formattedMessage, repo.getRangePrefixComponent(range));
+			}
+			else if(component.equals(RANGE_PLACEHOLDER)){
+				formattedMessage = new TextComponent(formattedMessage, repo.getRangeTextComponent(range));
 			}
 			else if(component.equals(PLAYER_PLACEHOLDER)) {
 				formattedMessage = new TextComponent(formattedMessage,TextUtils.getNameTextComponent(player));

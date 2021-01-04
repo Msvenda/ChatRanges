@@ -140,6 +140,24 @@ public class Config {
             e.printStackTrace();
         }
 
+        //load formatting
+        messageFormat = formattingSection.getString("message", "{prefix} {player}: {message}");
+        emoteFormat = formattingSection.getString("emote", "* {prefix} {player} {message}");
+        formattingSection = formattingSection
+                .getConfigurationSection("command");
+        rangesCommandPrefix = formattingSection
+                .getConfigurationSection("ranges").getString("message-prefix", "Available Ranges:");
+        formattingSection = formattingSection.getConfigurationSection("spy");
+        spyTag = formattingSection.getString("tag");
+        try{
+            spyColor = getColourFromString(formattingSection.getString("colour", ""));
+        }catch (IllegalArgumentException e){
+            LoggingUtil.logWarning("Failed to load colour for spy tag, using default value");
+            e.printStackTrace();
+            spyColor = defaultPrefixColor;
+        }
+        spyPosition = formattingSection.getString("position", "prefix");
+
 
         //load all ranges
         for(String rangeKey : rangesSection.getKeys(false)){
@@ -150,6 +168,7 @@ public class Config {
                 String name = range.getString("name", rangeKey);
                 String command = range.getString("command", rangeKey);
                 String description = range.getString("description", "Changes your chat range to {range}. [{distance}]");
+                String format = range.getString("format", messageFormat);
                 List<String> aliases = range.getStringList("aliases");
                 boolean crossDimension = range.getBoolean("cross-dimension", false);
                 Double distance = range.getDouble("distance", -1);
@@ -171,7 +190,7 @@ public class Config {
                         : "";
                 //create ChatRange and add to chatRangeList
                 ChatRange chatRange = new ChatRange(rangeKey, name, description,
-                        command, aliases, crossDimension, distance,
+                        format, command, aliases, crossDimension, distance,
                         colour, prefix, permission, readPermission);
 
                 repo.addChatRange(chatRange);
@@ -190,6 +209,7 @@ public class Config {
                 String name = emote.getString("name", emoteKey);
                 String command = emote.getString("command", emoteKey);
                 String description = emote.getString("description", "");
+                String format = emote.getString("format", emoteFormat);
                 String rangeKey = emote.getString("range", "");
                 Optional<ChatRange> range = repo.getChatRangeByKey(rangeKey);
                 List<String> aliases = emote.getStringList("aliases");
@@ -208,7 +228,7 @@ public class Config {
 
                 if(range.isPresent()){
                     EmoteRange emoteRange = new EmoteRange(emoteKey, name, description,
-                            command, aliases, range.get(), colour, prefix, permission);
+                            format, command, aliases, range.get(), colour, prefix, permission);
                     repo.addEmoteRange(emoteRange);
 
                 }
@@ -268,33 +288,15 @@ public class Config {
         displayItemInChat = featuresSection.getBoolean("display-item-in-chat", true);
         radialDistanceCheck = featuresSection.getBoolean("radial-distance-check", false);
         recipientNumberLogging = featuresSection.getBoolean("recipient-number-logging", false);
-
-        //load formatting
-        messageFormat = formattingSection.getString("message", "{prefix} {player}: {message}");
-        emoteFormat = formattingSection.getString("emote", "* {prefix} {player} {message}");
-        formattingSection = formattingSection
-                .getConfigurationSection("command");
-        rangesCommandPrefix = formattingSection
-                .getConfigurationSection("ranges").getString("message-prefix", "Available Ranges:");
-        formattingSection = formattingSection.getConfigurationSection("spy");
-        spyTag = formattingSection.getString("tag");
-        try{
-            spyColor = getColourFromString(formattingSection.getString("colour", ""));
-        }catch (IllegalArgumentException e){
-            LoggingUtil.logWarning("Failed to load colour for spy tag, using default value");
-            e.printStackTrace();
-            spyColor = defaultPrefixColor;
-        }
-        spyPosition = formattingSection.getString("position", "prefix");
     }
 
     //format
-    public String getMessageFormat() {
-        return messageFormat;
-    }
-    public String getEmoteFormat() {
-        return emoteFormat;
-    }
+//    public String getMessageFormat() {
+//        return messageFormat;
+//    }
+//    public String getEmoteFormat() {
+//        return emoteFormat;
+//    }
     public String getSpyPosition() {
         return spyPosition;
     }

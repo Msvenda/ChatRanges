@@ -30,6 +30,7 @@ public class EmoteCommand extends BukkitCommand {
 			MessageUtils.sendPlayersOnlyError(sender);
 			return true;
 		}
+
 		Player player = (Player) sender;
 		if(!rangeWritePerm.isEmpty() && !(player.hasPermission(rangeWritePerm))) {
 			MessageUtils.sendNoPermissionError(player);

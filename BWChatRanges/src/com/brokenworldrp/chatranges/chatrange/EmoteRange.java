@@ -10,6 +10,7 @@ public class EmoteRange implements Range {
 	private final String key;
 	private final String emoteName;
 	private final String emoteDescription;
+	private final String emoteFormat;
 	private final String emoteCommand;
 	private final ChatRange emoteRange;
 	private final List<String> emoteAliases;
@@ -17,11 +18,12 @@ public class EmoteRange implements Range {
 	private final String emotePrefix;
 	private final String emoteWritePermission;
 
-    public EmoteRange(String emoteKey, String name, String description, String command, List<String> aliases,
+    public EmoteRange(String emoteKey, String name, String description, String format, String command, List<String> aliases,
 					  ChatRange range, ChatColor colour, String prefix, String permission) {
     	this.key = emoteKey;
     	this.emoteName = name;
     	this.emoteDescription = description;
+    	this.emoteFormat = format;
     	this.emoteCommand = command;
     	this.emoteAliases = aliases;
     	this.emoteRange = range;
@@ -38,6 +40,11 @@ public class EmoteRange implements Range {
 	@Override
 	public String getDescription() {
 		return emoteDescription;
+	}
+
+	@Override
+	public String getFormat() {
+		return null;
 	}
 
 	@Override
@@ -80,6 +87,7 @@ public class EmoteRange implements Range {
 	public String getWritePermission() {
 		return emoteWritePermission;
 	}
+
 	public ChatRange getEmoteRange(){
     	return emoteRange;
 	}
