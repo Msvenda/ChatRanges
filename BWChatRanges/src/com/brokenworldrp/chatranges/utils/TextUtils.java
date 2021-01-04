@@ -28,16 +28,21 @@ public class TextUtils {
 		
 		//create shared hover text
 		String clickCommand = String.format("/%s ", range.getCommand());
-		BaseComponent hoverText = new TextComponent(simpleKeyValueComponent("Name:", range.getName()));
-		hoverText = new TextComponent(hoverText, simpleKeyValueComponent("Range:", String.format("%.1f blocks", range.getRange())));
+		BaseComponent hoverText = new TextComponent(simpleKeyValueComponent("Name", range.getName()));
+		if(range.isCrossDimensional() || range.getRange() <=0){
+			hoverText = new TextComponent(hoverText, simpleKeyValueComponent("Range", "\u221e"));
+		}
+		else{
+			hoverText = new TextComponent(hoverText, simpleKeyValueComponent("Range", String.format("%.1f blocks", range.getRange())));
+		}
 		hoverText = new TextComponent(hoverText, TextUtils.simpleKeyValueComponent("Cross-Dimensional", range.isCrossDimensional() ?
 				"\u2713" : "\u2717"));
-		hoverText = new TextComponent(hoverText, simpleKeyValueComponent("Command:", clickCommand));
+		hoverText = new TextComponent(hoverText, simpleKeyValueComponent("Command", clickCommand));
 		for(String alias : range.getAliases()) {
 			hoverText = new TextComponent(hoverText, simpleListComponent(alias));
 		}
-		hoverText = new TextComponent(hoverText, simpleKeyValueComponent("Prefix:", range.getPrefix()));
-		hoverText = new TextComponent(hoverText, simpleKeyValueComponent("Colour:", range.getColor().getName()));
+		hoverText = new TextComponent(hoverText, simpleKeyValueComponent("Prefix", range.getPrefix()));
+		hoverText = new TextComponent(hoverText, simpleKeyValueComponent("Colour", range.getColor().getName()));
 		hoverText = new TextComponent(hoverText, NEW_LINE);
 		hoverText = new TextComponent(hoverText, new TextComponent("Click to change to this range.\nShift-click to pre-type \"" + clickCommand + "\""));
 		
