@@ -7,6 +7,7 @@ import com.brokenworldrp.chatranges.data.Config;
 import com.brokenworldrp.chatranges.data.RangeRepository;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -244,10 +245,10 @@ public class TextUtils {
 	private static BaseComponent getItemComponent(ItemStack heldItem) {
 		Config config = Config.getConfig();
 		BaseComponent itemText;
-		if(heldItem != null && heldItem.hasItemMeta()){
+		if(heldItem != null){
 			itemText = new TextComponent("[");
 			if(heldItem.getItemMeta().getDisplayName().isEmpty()){
-				itemText = new TextComponent(itemText, new TextComponent(heldItem.getType().name().replace("_", " ").toLowerCase()));
+				itemText = new TextComponent(itemText, new TextComponent(WordUtils.capitalize(heldItem.getType().name().replace("_", " ").toLowerCase())));
 			}
 			else{
 				System.out.println(heldItem.getItemMeta().getDisplayName());
