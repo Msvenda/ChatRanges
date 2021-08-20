@@ -16,8 +16,11 @@ commands:
     aliases: ['rangespy', 'rs', 's']
     usage: '/<command> [on/off] - Checks or sets your spy status.'
     permission: 'chatrange.command.spy'
-
   mute:
     description: 'Mutes or unmutes a range.'
     aliases: ['rangemute', 'channelmute']
     usage: '/<command> <range> - Toggles the mute status of the channel.'
+  checkspies:
+    description: 'Shows list of current spies'
+    usage: '/checkspies - show spies'
+    permission: 'chatrange.command.checkspies'

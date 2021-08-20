@@ -23,6 +23,7 @@ public class ChatRangesMain extends JavaPlugin {
 		Bukkit.getPluginCommand("ranges").setExecutor(new CheckRangeCommand());
 		Bukkit.getPluginCommand("spy").setExecutor(new SpyCommand());
 		Bukkit.getPluginCommand("mute").setExecutor(new MuteCommand());
+		Bukkit.getPluginCommand("checkspies").setExecutor(new CheckSpiesCommand());
 
 		//initialize config
 		try {

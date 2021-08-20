@@ -9,6 +9,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -94,7 +95,8 @@ public class Config {
             if (!parent.exists() && !parent.mkdirs()) {
                 throw new IllegalStateException("Couldn't create dir: " + parent);
             }
-            Files.copy(getClass().getResourceAsStream("/config.yml"), Paths.get(CONFIG_LOCATION), StandardCopyOption.REPLACE_EXISTING);
+            InputStream resource = getClass().getResourceAsStream("/config.yml");
+            Files.copy(resource, Paths.get(CONFIG_LOCATION), StandardCopyOption.REPLACE_EXISTING);
             LoggingUtil.logInfo(String.format("Config file created at '%s'", CONFIG_LOCATION));
         } catch (IOException e) {
             LoggingUtil.logWarning(String.format("Failed creating config file at '%s'", CONFIG_LOCATION));

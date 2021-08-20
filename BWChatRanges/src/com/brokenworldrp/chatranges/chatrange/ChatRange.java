@@ -50,7 +50,7 @@ public class ChatRange implements Range{
     	Config config = Config.getConfig();
 
 		List<Player> allRecipients;
-		//get players with permission in range
+		//get players in range
 		if(rangeRadius <= 0 || crossDimension) {
 			if(crossDimension){
 				allRecipients = Bukkit.getOnlinePlayers().stream()

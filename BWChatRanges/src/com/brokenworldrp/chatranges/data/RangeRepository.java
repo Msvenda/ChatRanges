@@ -145,7 +145,14 @@ public class RangeRepository {
     public List<Player> getSpies(){
         List<Player> players = new ArrayList<>();
         for(UUID id : spies){
-            players.add(Bukkit.getPlayer(id));
+            Player p = Bukkit.getPlayer(id);
+            if(p != null){
+                players.add(p);
+            }
+            else{
+                LoggingUtil.logWarning("[getSpies] player with UUID " + id + " not found, removing from spy list");
+                spies.remove(id);
+            }
         }
         return players;
     }

@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="BWChatRanges:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/BWChatRanges_jar</output-path>
+    <root id="archive" name="BWChatRanges.jar">
+      <element id="module-output" name="BWChatRanges" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/commons/commons-text/1.9/commons-text-1.9.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.11/commons-lang3-3.11.jar" path-in-jar="/" />
+      <element id="file-copy" path="$PROJECT_DIR$/plugin.yml" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/resources/config.yml" />
+    </root>
+  </artifact>
+</component>
