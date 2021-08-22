@@ -139,15 +139,16 @@ public class TextUtils {
 		m = m+" ";
 		BaseComponent message = new TextComponent();
 		String[] splitMessage = m.split("\"");
-		//if there is an odd number of elements, there is an event number of quotations
+
+		BaseComponent quotations = new TextComponent("\"");
+		quotations.setColor(r.getRangeColor());
+		//if there is an odd number of elements, there is an even number of quotations
 
 		for(int i = 0; i < splitMessage.length; i++) {
 			//surround @hand/offhand with brackets for easier recognition
 			if(config.isDisplayItemInChatEnabled()){
-				if( splitMessage[i].contains("@hand") || splitMessage[i].contains("@offhand")) {
-					splitMessage[i] = splitMessage[i].replaceAll("@hand", "{@hand}");
-					splitMessage[i] = splitMessage[i].replaceAll("@offhand", "{@offhand}");
-				}
+				splitMessage[i] = splitMessage[i].replaceAll("@hand", "{@hand}");
+				splitMessage[i] = splitMessage[i].replaceAll("@offhand", "{@offhand}");
 			}
 			String[] parts = splitMessage[i].split(DELIMITER_REGEX);
 			for(String part : parts) {
@@ -169,6 +170,11 @@ public class TextUtils {
 					}
 					message = new TextComponent(message, partText);
 				}
+			}
+
+			//put quotations around vocal part of emote
+			if(splitMessage.length%2 == 1 && i%2 == 1){
+				message = new TextComponent(quotations, message, quotations);
 			}
 		}
 		return message;

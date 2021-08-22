@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class RangeRepository {
     private static final String RANGE_FILE = "plugins/BWChatRanges/rangeData.yml";
@@ -43,7 +44,7 @@ public class RangeRepository {
         chatRanges = new HashMap<>();
         playerRanges = new HashMap<>();
         mutedRanges = new HashMap<>();
-        spies = new HashSet<>();
+        spies = new CopyOnWriteArraySet<>();
         rangePrefixComponents = new HashMap<>();
         rangeTextComponents = new HashMap<>();
         loadRepositoryData();
