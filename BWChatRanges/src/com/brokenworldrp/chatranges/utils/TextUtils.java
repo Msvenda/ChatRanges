@@ -8,12 +8,17 @@ import com.brokenworldrp.chatranges.data.RangeRepository;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
 import org.apache.commons.lang.WordUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Method;
 
 public class TextUtils {
+
+	private static final String VERSION = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + ".";
+
 	private static final String DELIMITER_REGEX = "[{}]+";
 	
 	private static final TextComponent NEW_LINE = new TextComponent("\n");
@@ -139,7 +144,7 @@ public class TextUtils {
 		m = m+" ";
 		BaseComponent message = new TextComponent();
 		String[] splitMessage = m.split("\"");
-		//if there is an odd number of elements, there is an event number of quotations
+		//if there is an odd number of elements, there is an even number of quotations
 
 		for(int i = 0; i < splitMessage.length; i++) {
 			//surround @hand/offhand with brackets for easier recognition
@@ -160,11 +165,14 @@ public class TextUtils {
 					message = new TextComponent(message, getItemComponent(heldItem));
 				}
 				else {
-					BaseComponent partText = new TextComponent(part);
+					BaseComponent partText;
 					if(splitMessage.length%2 == 0) {
+						partText =  new TextComponent(part);
 						partText.setColor(r.getColor());
 					}
 					else {
+						//add quotation marks to text parts
+						partText = i%2 == 0 ? new TextComponent(part) : new TextComponent("\""+part+"\"");
 						partText.setColor(i%2 == 0 ? r.getColor() : r.getRangeColor());
 					}
 					message = new TextComponent(message, partText);
@@ -245,7 +253,7 @@ public class TextUtils {
 	private static BaseComponent getItemComponent(ItemStack heldItem) {
 		Config config = Config.getConfig();
 		BaseComponent itemText;
-		if(heldItem != null){
+		if(heldItem != null && !heldItem.getType().equals(Material.AIR)){
 			itemText = new TextComponent("[");
 			if(heldItem.getItemMeta().getDisplayName().isEmpty()){
 				itemText = new TextComponent(itemText, new TextComponent(WordUtils.capitalize(heldItem.getType().name().replace("_", " ").toLowerCase())));
@@ -276,8 +284,8 @@ public class TextUtils {
 	private static String getItemJson(ItemStack item) throws ReflectiveOperationException
 	{
 		Class<?> craftItemStackClass = ReflectionUtil.getOBCClass("inventory.CraftItemStack");
-		Class<?> nbtTagCompoundClass = ReflectionUtil.getNMSClass("NBTTagCompound");
-		Class<?> nmsItemStackClass = ReflectionUtil.getNMSClass("ItemStack");
+		Class<?> nbtTagCompoundClass = ReflectionUtil.getNMSClass("NBTTagCompound", "net.minecraft.nbt");
+		Class<?> nmsItemStackClass = ReflectionUtil.getNMSClass("ItemStack", "net.minecraft.world.item");
 
 		Method asNmsCopyMethod = ReflectionUtil.getMethod(craftItemStackClass, "asNMSCopy", ItemStack.class);
 		Method saveNmsItemStackMethod = ReflectionUtil.getMethod(nmsItemStackClass, "save", nbtTagCompoundClass);

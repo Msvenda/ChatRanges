@@ -56,12 +56,12 @@ public class ReflectionUtil {
      * @param nmsClassName The name of the class
      * @return The class
      */
-    public static Class<?> getNMSClass(String nmsClassName) {
+    public static Class<?> getNMSClass(String nmsClassName, String nmsPackage) {
         if (loadedNMSClasses.containsKey(nmsClassName)) {
             return loadedNMSClasses.get(nmsClassName);
         }
 
-        String clazzName = "net.minecraft.server." + getVersion() + nmsClassName;
+        String clazzName = nmsPackage + "." + nmsClassName;
         Class<?> clazz;
 
         try {
