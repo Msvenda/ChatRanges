@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="EntryPointsManager">
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="org.bukkit.event.EventHandler" />
+    </list>
     <pattern value="com.brokenworldrp.chatranges.commands.ChangeRangeCommand" />
     <pattern value="com.brokenworldrp.chatranges.commands.ChangeRangeCommand" method="ChangeRangeCommand" />
     <pattern value="com.brokenworldrp.chatranges.listeners.ChatListener" />
@@ -23,5 +26,5 @@
       </list>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_15" default="false" project-jdk-name="corretto-15" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_15" project-jdk-name="18" project-jdk-type="JavaSDK" />
 </project>

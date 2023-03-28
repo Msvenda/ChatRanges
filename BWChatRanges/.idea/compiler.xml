@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="BWChatRanges" target="1.15" />
+      <module name="BWChatRanges" target="18" />
     </bytecodeTargetLevel>
   </component>
 </project>
